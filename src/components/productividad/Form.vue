@@ -11,7 +11,7 @@
                                         <v-autocomplete v-model="codarea" :items="areas" item-text="descripcion" item-value="codarea" hide-details filled label="Procesos" @change="obtener_colaboradores()"></v-autocomplete>
                                     </v-col>
                                     <v-col>
-                                        <v-autocomplete :items="colaboradores" item-text="nombre_completo" item-value="nit" hide-details filled label="Colaborador"></v-autocomplete>
+                                        <v-autocomplete v-model="nit_colaborador" :items="colaboradores" item-text="nombre_completo" item-value="nit" hide-details filled label="Colaborador" @change="obtener_datos()"></v-autocomplete>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
@@ -19,11 +19,14 @@
 
                     </v-col>
                 </v-row>
-                <v-row class="mt-2">
+                <v-row v-if="nit_colaborador" class="mt-2">
                     <v-col v-if="criterio.metodo_calificacion == 'verificacion'">
                         <v-btn-toggle>
-                            <v-btn>
-                                <v-icon>mdi-check-all</v-icon>
+                            <v-btn @click="marcar_todos()">
+                                <v-icon>
+                                    {{ check_all ? 'mdi-close-circle' : 'mdi-check-all' }}
+                                    mdi-check-all
+                                </v-icon>
                             </v-btn>
                         </v-btn-toggle>
                     </v-col>
@@ -64,52 +67,35 @@
                             </v-card-text>
                         </v-card>
 
-                        <!-- <v-card outlined v-if="criterio.metodo_calificacion == 'verificacion'">
-                            <v-card-text class="pt-0 pb-0">
-                                <v-row dense align="center">
-                                    <v-col cols="1">
-                                        <v-btn :color="item.check ? 'success' : 'secondary'" @click="item.check = !item.check" icon>
-                                            <v-icon>
-                                                {{ !item.check ? 'mdi-checkbox-blank-circle-outline' : 'mdi-checkbox-marked-circle' }}
-                                            </v-icon>
-                                        </v-btn>
-                                    </v-col>
-                                    <v-col>
-                                        <h3>
-                                            {{ item.descripcion }}
-                                        </h3>
-                                    </v-col>
-                                    
-                                </v-row>
-                            </v-card-text>
-                        </v-card> -->
-
                         <v-row align="center" v-if="criterio.metodo_calificacion == 'verificacion'" >
                             <v-col cols="8">
-                                <v-btn @click="item.check = !item.check" :color="item.check ? 'success' : ''" block>
+                                <v-btn @click="click_item(item)" :color="item.check ? 'success' : ''" block>
                                     {{ item.descripcion }}
                                 </v-btn>
                             </v-col>
                             <v-col cols="2">
-                                <v-text-field readonly autocomplete="off" dense hide-details outlined></v-text-field>
+                                <v-text-field v-model="item.value" :disabled="!item.editable" autocomplete="off" dense hide-details outlined></v-text-field>
                             </v-col>
                             <v-col>
-                                <v-btn small color="blue darken-4" icon>
+                                <v-btn @click="item.editable = !item.editable" x-small color="blue darken-4" icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
                                 </v-btn>
-                                <v-btn class="ml-4" small color="info" icon>
+                                <v-btn @click="item.show_description = !item.show_description" class="ml-4" x-small color="info" icon>
                                     <v-icon>
                                         mdi-message
                                     </v-icon>
                                 </v-btn>
                             </v-col>
+                            <v-col v-if="item.show_description" cols="8">
+                                <v-textarea outlined :rows="3"></v-textarea>
+                            </v-col>
                         </v-row>
                     </v-col>
 
                     <!-- Calificación -->
-                    <v-col>
+                    <v-col  v-if="criterio.metodo_calificacion == 'verificacion'">
                         <v-row>
                             <v-col cols="8" class="text-right">
                                 <h1>Total: </h1>
@@ -122,12 +108,32 @@
                         </v-row>
                     </v-col>
                 </v-row>
+
+                <v-row v-if="!nit_colaborador" align="center" justify="center">
+                    <v-col cols="12">
+                        <v-row justify="center">
+                            <v-col cols="2">
+                                <v-img src="@/assets/img/info.png"></v-img>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-alert
+                            border="right"
+                            color="blue-grey"
+                            dark
+                        >
+                            Debe de seleccionar primero a un colaborador.
+                        </v-alert>
+                    </v-col>
+                </v-row>
+
                 <v-row class="mt-4">
                     <v-col class="text-center">
                         <v-btn @click="$emit('closeModal')" large dark>
                             CANCELAR
                         </v-btn>
-                        <v-btn type="submit" large color="primary" class="ml-2">
+                        <v-btn :disabled="!nit_colaborador" type="submit" large color="primary" class="ml-2">
                             REGISTRAR
                         </v-btn>
                     </v-col>
@@ -142,13 +148,18 @@
     import request from '@/functions/request'
 
     export default {
+        props: {
+            closed: Boolean
+        },
         data(){
             return{
                 criterio: {},
                 items: [],
                 areas: [],
                 colaboradores: [],
-                codarea: null
+                codarea: null,
+                check_all: false,
+                nit_colaborador: null
             }
         },
         methods: {
@@ -201,6 +212,35 @@
 				})
 
 			},
+            marcar_todos(){
+
+                this.check_all = !this.check_all
+
+                this.items.forEach(item => {
+
+                    item.check = this.check_all
+                    
+
+                });
+
+            },
+            click_item(item){
+
+                item.check = !item.check
+
+                item.value = item.check ? 100 : 0
+
+            }
+        },
+        watch: {
+            closed: function(){
+
+                if (!closed) {
+                    this.obtener_datos()
+                    this.obtener_areas()
+                }
+
+            }
         },
         mounted(){
 
