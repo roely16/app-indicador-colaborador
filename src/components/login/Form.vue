@@ -59,6 +59,10 @@
 							
 							alert.show(response.data)
 
+						}else{
+
+							this.$router.push({name: 'home'})
+
 						}
 					})
 
