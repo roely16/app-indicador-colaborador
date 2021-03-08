@@ -23,7 +23,6 @@
 							@change="obtener_colaboradores()"
 						></v-autocomplete>
                     </v-col>
-					
 				</v-row>
 			</v-card-text>
 
@@ -35,6 +34,27 @@
 					</v-col>
                 </v-row>
             </v-card-text>
+
+			<v-card-text>
+				<v-row v-if="!codarea" align="center" justify="center">
+                    <v-col cols="12">
+                        <v-row justify="center">
+                            <v-col cols="2">
+                                <v-img src="@/assets/img/info.png"></v-img>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                    <v-col cols="4">
+                        <v-alert
+                            border="right"
+                            color="blue-grey"
+                            dark
+                        >
+                            Debe de seleccionar primero un área.
+                        </v-alert>
+                    </v-col>
+                </v-row>
+			</v-card-text>
         </v-card>
     </div>
 </template>

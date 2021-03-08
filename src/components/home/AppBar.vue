@@ -11,7 +11,7 @@
 
             <v-spacer></v-spacer>
 
-            <v-btn icon>
+            <v-btn :to="{ name: 'home' }" icon>
                 <v-icon>mdi-home</v-icon>
             </v-btn>
             <v-btn icon>
