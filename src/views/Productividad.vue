@@ -1,7 +1,7 @@
 <template>
     <div>
 		<v-card class="mt-4 pl-4 pr-4">
-			<v-card-text>
+			<v-card-text class="mb-0 pb-0">
 				<v-row>
 					<v-col>
 						<v-breadcrumbs
@@ -11,27 +11,21 @@
 						></v-breadcrumbs>
 					</v-col>
 					<v-spacer></v-spacer>
-					<v-col align="end">
-						<v-btn color="success" @click="mostrar_modal()" large>
-							<v-icon>
-								mdi-plus
-							</v-icon>
-						</v-btn>
-					</v-col>
+					
 				</v-row>
 			</v-card-text>
 
 			<!-- Tabla de registros -->
 			<v-card-text>
 
-				<v-row align="center" class="mb-2">
-					<v-col md="4">
+				<v-row align="center" class="mb-4">
+					<!-- <v-col md="4">
 						<v-autocomplete
 							v-model="codarea"
 							:items="areas"
 							item-text="descripcion"
 							item-value="codarea"
-							filled
+							outlined
 							label="Procesos"
 							hide-details
 							@change="obtener_colaboradores()"
@@ -43,20 +37,27 @@
 							:items="colaboradores"
 							item-text="nombre_completo"
 							item-value="nit"
-							filled
+							outlined
 							label="Colaborador"
 							hide-details
 						></v-autocomplete>
-					</v-col>
-					<v-col>
+					</v-col> -->
+					<v-col cols="4">
 						<v-text-field
-							append-icon="mdi-magnify"
+							prepend-inner-icon="mdi-magnify"
 							label="Buscar..."
 							single-line
 							hide-details
-							filled
+							outlined
 							autocomplete="off"
 						></v-text-field>
+					</v-col>
+					<v-col align="end">
+						<v-btn color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
+							<v-icon>
+								mdi-plus
+							</v-icon>
+						</v-btn>
 					</v-col>
 				</v-row>
 

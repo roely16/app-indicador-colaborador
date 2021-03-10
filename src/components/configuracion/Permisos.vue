@@ -1,118 +1,154 @@
 <template>
     <div>
         <v-row class="mt-4">
+            <v-col cols="4">
+                <v-text-field
+                    v-model="busqueda"
+                    outlined
+                    label="Buscar..."
+                    hide-details
+                    prepend-inner-icon="mdi-magnify"
+                    autocomplete="off"
+                ></v-text-field>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col align="end" cols="4" md="2">
+                <v-btn @click="mostrar_modal()" color="teal darken-1" elevation="2" dark fab>
+                    <v-icon>
+                        mdi-plus
+                    </v-icon>
+                </v-btn>
+            </v-col>
+        </v-row>
+        <v-row class="mt-4">
             <v-col>
                 <v-data-table
                     :headers="headers"
-                    :items="desserts"
+                    :items="items"
                     :items-per-page="5"
                     hide-default-footer
-                ></v-data-table>
+                    :page.sync="page"
+					@page-count="pageCount = $event"
+                >
+
+                     <template v-slot:[`item.action`]="{ item }">
+                        <v-btn @click="mostrar_editar(item)" x-small icon color="blue accent-4">
+                            <v-icon>
+                                mdi-pencil
+                            </v-icon>
+                        </v-btn>
+
+                        <v-btn @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
+                            <v-icon>
+                                mdi-delete
+                            </v-icon>
+                        </v-btn>
+
+                    </template>
+
+                </v-data-table>
+
+                <v-pagination
+					class="mt-4 mb-4"
+					v-model="page"
+					:length="pageCount"
+				></v-pagination>
+
             </v-col>
         </v-row>
+
+        <Modal @closeModal="clear" ref="modal" :title="title" :width="width">
+            <template #form>
+                <FormPermisos @closeModal="close_modal" :prop_codarea="codarea" :prop_nit="nit" ref="form"></FormPermisos>
+            </template>
+        </Modal>
+
     </div>
 </template>
 
 <script>
+
+    import Modal from '@/components/Modal'
+    import FormPermisos from '@/components/configuracion/FormPermisos'
+
+    import request from '@/functions/request'
+
     export default {
+        components: {
+            Modal,
+            FormPermisos
+        },
         data () {
             return {
-                headers: [
-                {
-                    text: 'Dessert (100g serving)',
-                    align: 'start',
-                    sortable: false,
-                    value: 'name',
-                },
-                { text: 'Calories', value: 'calories' },
-                { text: 'Fat (g)', value: 'fat' },
-                { text: 'Carbs (g)', value: 'carbs' },
-                { text: 'Protein (g)', value: 'protein' },
-                { text: 'Iron (%)', value: 'iron' },
-                ],
-                desserts: [
-                {
-                    name: 'Frozen Yogurt',
-                    calories: 159,
-                    fat: 6.0,
-                    carbs: 24,
-                    protein: 4.0,
-                    iron: '1%',
-                },
-                {
-                    name: 'Ice cream sandwich',
-                    calories: 237,
-                    fat: 9.0,
-                    carbs: 37,
-                    protein: 4.3,
-                    iron: '1%',
-                },
-                {
-                    name: 'Eclair',
-                    calories: 262,
-                    fat: 16.0,
-                    carbs: 23,
-                    protein: 6.0,
-                    iron: '7%',
-                },
-                {
-                    name: 'Cupcake',
-                    calories: 305,
-                    fat: 3.7,
-                    carbs: 67,
-                    protein: 4.3,
-                    iron: '8%',
-                },
-                {
-                    name: 'Gingerbread',
-                    calories: 356,
-                    fat: 16.0,
-                    carbs: 49,
-                    protein: 3.9,
-                    iron: '16%',
-                },
-                {
-                    name: 'Jelly bean',
-                    calories: 375,
-                    fat: 0.0,
-                    carbs: 94,
-                    protein: 0.0,
-                    iron: '0%',
-                },
-                {
-                    name: 'Lollipop',
-                    calories: 392,
-                    fat: 0.2,
-                    carbs: 98,
-                    protein: 0,
-                    iron: '2%',
-                },
-                {
-                    name: 'Honeycomb',
-                    calories: 408,
-                    fat: 3.2,
-                    carbs: 87,
-                    protein: 6.5,
-                    iron: '45%',
-                },
-                {
-                    name: 'Donut',
-                    calories: 452,
-                    fat: 25.0,
-                    carbs: 51,
-                    protein: 4.9,
-                    iron: '22%',
-                },
-                {
-                    name: 'KitKat',
-                    calories: 518,
-                    fat: 26.0,
-                    carbs: 65,
-                    protein: 7,
-                    iron: '6%',
-                },
-                ],
+                busqueda: null,
+                title: null,
+                width: null,
+                headers: [],
+                items: [],
+                page: 1,
+				pageCount: 0,
+                nit: null,
+                codarea: null
             }
+        },
+        methods: {
+
+            mostrar_modal(){
+
+                this.title = "Habilitación de Permisos"
+                this.width = "900"
+                this.$refs.modal.show()
+
+            },
+            obtener_permisos(){
+
+                const data = {
+                    url: 'permisos_habilitados',
+                    data: null
+                }
+
+                request.post(data)
+                .then((response) => {
+                    
+                    this.items = response.data.items
+                    this.headers = response.data.headers
+
+                })
+
+            },
+            mostrar_editar(item){
+
+                this.title = "Editar Permisos"
+                this.width = "900"
+                this.nit = item.id_persona
+
+                this.codarea = item.codarea
+                this.$refs.modal.show()
+
+            },
+            eliminar(){
+
+            },
+            close_modal(){
+
+                this.nit = null
+                this.codarea = null
+                this.$refs.modal.close()
+
+            },
+            clear(){
+
+                console.log('clear')
+                this.nit = null
+                this.codarea = null
+
+            }
+
+        },
+        mounted(){
+
+            this.obtener_permisos()
+
         }
     }
 </script>

@@ -53,6 +53,7 @@
 
 					request.post(data)
 					.then((response) => {
+
 						console.log(response.data)
 
 						if (response.data.status != 200) {
@@ -60,6 +61,17 @@
 							alert.show(response.data)
 
 						}else{
+
+							// Almacenar en localStorage
+							const datos_usuarios = {
+								nombre: response.data.data.nombre,
+								apellido: response.data.data.apellido,
+								nit: response.data.data.nit,
+								codarea: response.data.data.codarea,
+								seccion: response.data.data.seccion
+							}
+
+							localStorage.setItem('app-estado-desarrollo', JSON.stringify(datos_usuarios))
 
 							this.$router.push({name: 'home'})
 

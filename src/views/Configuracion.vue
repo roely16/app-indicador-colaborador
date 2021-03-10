@@ -61,7 +61,7 @@
         },
         data(){
             return{
-                tab: 2,
+                tab: 1,
                 breadcrumbs: [
 					{
 						text: 'Home',

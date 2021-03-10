@@ -8,10 +8,10 @@
                             <v-card-text>
                                 <v-row dense>
                                     <v-col>
-                                        <v-autocomplete v-model="codarea" :items="areas" item-text="descripcion" item-value="codarea" hide-details filled label="Procesos" @change="obtener_colaboradores()"></v-autocomplete>
+                                        <v-autocomplete v-model="codarea" :items="areas" item-text="descripcion" item-value="codarea" outlined single-line label="Procesos" @change="obtener_colaboradores()"></v-autocomplete>
                                     </v-col>
                                     <v-col>
-                                        <v-autocomplete v-model="nit_colaborador" :items="colaboradores" item-text="nombre_completo" item-value="nit" hide-details filled label="Colaborador" @change="obtener_datos()"></v-autocomplete>
+                                        <v-autocomplete v-model="nit_colaborador" :items="colaboradores" item-text="nombre_completo" item-value="nit" hide-details outlined single-line label="Colaborador" @change="obtener_datos()"></v-autocomplete>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
@@ -117,14 +117,10 @@
                             </v-col>
                         </v-row>
                     </v-col>
-                    <v-col cols="6">
-                        <v-alert
-                            border="right"
-                            color="blue-grey"
-                            dark
-                        >
+                    <v-col class="text-center" cols="6">
+                        <p class="overline">
                             Debe de seleccionar primero a un colaborador.
-                        </v-alert>
+                        </p>
                     </v-col>
                 </v-row>
 

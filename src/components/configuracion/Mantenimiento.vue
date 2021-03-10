@@ -4,7 +4,8 @@
             <v-col cols="4">
                 <v-text-field
                     v-model="busqueda"
-                    filled
+                    outlined
+                    single-line
                     label="Buscar..."
                     hide-details
                     prepend-inner-icon="mdi-magnify"
@@ -17,7 +18,8 @@
                     :items="criterios"
                     item-text="nombre"
                     item-value="id"
-                    filled
+                    outlined
+                    single-line
                     label="Módulo"
                     hide-details
                     prepend-inner-icon="mdi-table-edit"
@@ -36,9 +38,9 @@
 
         <v-row v-if="criterio">
             <v-col>
-                <v-chip label color="deep-orange darken-1" dark small>PONDERACIÓN: {{ criterio_obj.valor }}%</v-chip>
+                <v-chip label outlined color="deep-orange darken-1" dark small>PONDERACIÓN: {{ criterio_obj.valor }}%</v-chip>
 
-                <v-chip v-if="criterio_obj.valor_iso" class="ml-2" label color="blue" dark small>ISO: {{ criterio_obj.valor_iso }}%</v-chip>
+                <v-chip v-if="criterio_obj.valor_iso" class="ml-2" label outlined color="blue" dark small>ISO: {{ criterio_obj.valor_iso }}%</v-chip>
 
             </v-col>
         </v-row>
@@ -55,11 +57,11 @@
                 >
 
                     <template v-slot:[`item.valor`] = "{ item }">
-                        <v-chip v-if="item.valor" label color="deep-orange darken-1" dark small>
+                        <v-chip v-if="item.valor" label outlined color="deep-orange darken-1" dark small>
                             {{ item.valor }}%
                         </v-chip>
 
-                        <v-chip class="ml-2" v-if="item.valor_iso" label color="blue" dark small>
+                        <v-chip class="ml-2" v-if="item.valor_iso" label outlined color="blue" dark small>
                             {{ item.valor_iso }}%
                         </v-chip>
 
@@ -67,24 +69,24 @@
 
                      <template v-slot:[`item.aplica`] = "{ item }">
 
-                        <v-chip v-if="item.aplica_asesor" label color="cyan darken-4" dark x-small>
+                        <v-chip v-if="item.aplica_asesor" label outlined color="cyan darken-4" dark x-small>
                             ASESOR
                         </v-chip>
 
-                        <v-chip v-if="item.aplica_prestador" label color="blue-grey darken-2" dark x-small>
+                        <v-chip v-if="item.aplica_prestador" label outlined color="blue-grey darken-2" dark x-small>
                             PRESTADOR
                         </v-chip>
 
                     </template>
 
-                    <template v-slot:[`item.action`]="{  }">
-                        <v-btn x-small icon color="blue accent-4">
+                    <template v-slot:[`item.action`]="{ item }">
+                        <v-btn @click="mostrar_editar(item.id)" x-small icon color="blue accent-4">
                             <v-icon>
                                 mdi-pencil
                             </v-icon>
                         </v-btn>
 
-                        <v-btn class="ml-2" x-small icon color="red accent-4">
+                        <v-btn @click="eliminar(item.id)" class="ml-2" x-small icon color="red accent-4">
                             <v-icon>
                                 mdi-delete
                             </v-icon>
@@ -102,7 +104,7 @@
             </v-col>
         </v-row>
 
-        <v-row v-if="!criterio" class="mt-4" align="center" justify="center">
+        <v-row v-if="!criterio" class="mt-10" align="center" justify="center">
             <v-col cols="12">
                 <v-row justify="center">
                     <v-col cols="2">
@@ -110,20 +112,16 @@
                     </v-col>
                 </v-row>
             </v-col>
-            <v-col cols="4">
-                <v-alert
-                    border="right"
-                    color="blue-grey"
-                    dark
-                >
-                    Debe de seleccionar primero a un módulo.
-                </v-alert>
+            <v-col class="text-center" cols="4">
+               <p class="overline">
+                   Debe de seleccionar primero un módulo.
+               </p>
             </v-col>
         </v-row>
 
         <Modal ref="modal" :title="title" :width="width">
             <template #form>
-                <FormMantenimiento :criterio="criterio_obj" ref="form"></FormMantenimiento>
+                <FormMantenimiento @closeModal="close_modal" :id_item="id_item" :criterio="criterio_obj" ref="form"></FormMantenimiento>
             </template>
         </Modal>
     </div>
@@ -132,6 +130,7 @@
 <script>
 
     import request from '@/functions/request.js'
+    import alert from '@/functions/alert.js'
 
     import Modal from '@/components/Modal'
     import FormMantenimiento from '@/components/configuracion/FormMantenimiento'
@@ -152,7 +151,8 @@
                 busqueda: null,
                 headers: [],
                 items: [],
-                criterio_obj: {}
+                criterio_obj: {},
+                id_item: null
             }
         },
         methods: {
@@ -195,7 +195,42 @@
                 this.width = "600"
                 this.$refs.modal.show()
 
-            }
+            },
+            mostrar_editar(id){
+
+                this.id_item = id
+                this.title = "Editar Item"
+                this.width = "600"
+                this.$refs.modal.show()
+
+            },
+            eliminar(id){
+
+                const alert_msg = {
+                    title: "¿Está seguro?",
+                    message: "Una vez eliminado no se podrá recuperar",
+                    type: "warning",
+                    confirm_text: "ELIMINAR!",
+                    cancel_text: "Cancelar"
+                }
+
+                alert.show_confirm(alert_msg)
+                .then((result) => {
+                    
+                    if (result.isConfirmed) {
+                        
+                        console.log(id)
+
+                    }
+
+                })
+
+            },
+            close_modal(){
+
+                this.$refs.modal.close()
+
+            }   
 
         },
         mounted(){

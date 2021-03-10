@@ -17,8 +17,9 @@
 							:items="areas"
 							item-text="descripcion"
 							item-value="codarea"
-							filled
-							label="Procesos"
+							outlined
+							single-line
+							label="Secciones"
 							hide-details
 							@change="obtener_colaboradores()"
 						></v-autocomplete>
@@ -35,25 +36,8 @@
                 </v-row>
             </v-card-text>
 
-			<v-card-text>
-				<v-row v-if="!codarea" align="center" justify="center">
-                    <v-col cols="12">
-                        <v-row justify="center">
-                            <v-col cols="2">
-                                <v-img src="@/assets/img/info.png"></v-img>
-                            </v-col>
-                        </v-row>
-                    </v-col>
-                    <v-col cols="4">
-                        <v-alert
-                            border="right"
-                            color="blue-grey"
-                            dark
-                        >
-                            Debe de seleccionar primero un área.
-                        </v-alert>
-                    </v-col>
-                </v-row>
+			<v-card-text v-if="!codarea">
+				<AlertSeleccion msg="Debe de seleccionar primero una sección"></AlertSeleccion>
 			</v-card-text>
         </v-card>
     </div>
@@ -65,10 +49,13 @@
 
     import Indicador from '@/components/dashboard/Indicador.vue'
 
+	import AlertSeleccion from '@/components/AlertSeleccion'
+
     export default {
        
        components: {
-           Indicador
+           Indicador,
+			AlertSeleccion
        },
         data(){
             return{
@@ -101,7 +88,6 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.areas = response.data
 				})
 
@@ -117,7 +103,6 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.colaboradores = response.data
 				})
 

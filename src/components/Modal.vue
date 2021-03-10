@@ -52,7 +52,19 @@
                 this.dialog = true
             },
             close(){
+
+                this.$emit('closeModal')
                 this.dialog = false
+
+            }
+        },
+        watch: {
+            dialog: function(val){
+
+                if (!val) {
+                    this.$emit('closeModal')
+                }
+
             }
         }
     }

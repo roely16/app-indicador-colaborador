@@ -1,5 +1,53 @@
 <template>
     <div>
+        <!-- <v-row dense>
+            <v-col>
+                <v-row dense>
+                    <v-col cols="12">
+                        <v-chip small label>
+                            HERSON ROELY CHUR CHINCHILLA
+                        </v-chip>                        
+                    </v-col>
+                    <v-col cols="12">
+                        <v-chip small label>
+                            COORDINACIÓN DE INFORMATICA
+                        </v-chip>
+                    </v-col>
+                </v-row>
+            </v-col>
+        </v-row> -->
+
+        <v-banner
+                single-line
+            >
+                <v-icon
+                slot="icon"
+                color="teal "
+                size="36"
+                >
+                mdi-account
+                </v-icon>
+
+                    <p class="overline mt-0 mb-0 pt-0 pb-0">
+                        {{ user_data.nombre }} {{ user_data.apellido }}
+                    </p>
+                    <p class="overline mt-0 mb-0 pt-0 pb-0" style="line-height: 1">
+                        <small>
+                            {{ user_data.seccion.descripcion }}
+                        </small>
+                    </p>
+
+                <template v-slot:actions>
+                    <v-btn
+                        color="orange darken-1"
+                        icon
+                    >
+                        <v-icon>
+                            mdi-bell
+                        </v-icon>
+                    </v-btn>
+                </template>
+            </v-banner>
         <v-row class="mt-4">
             <v-col cols="12" md="4" sm="6" v-for="(item, i) in menu" :key="i">
                 <v-card
@@ -88,6 +136,14 @@
 
             }
 
+        },
+        computed: {
+            user_data: function(){
+
+                const data = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
+                return data
+            }
         },
         mounted(){
 
