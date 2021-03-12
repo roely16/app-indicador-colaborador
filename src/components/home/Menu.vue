@@ -1,54 +1,37 @@
 <template>
     <div>
-        <!-- <v-row dense>
-            <v-col>
-                <v-row dense>
-                    <v-col cols="12">
-                        <v-chip small label>
-                            HERSON ROELY CHUR CHINCHILLA
-                        </v-chip>                        
-                    </v-col>
-                    <v-col cols="12">
-                        <v-chip small label>
-                            COORDINACIÓN DE INFORMATICA
-                        </v-chip>
-                    </v-col>
-                </v-row>
-            </v-col>
-        </v-row> -->
-
         <v-banner
-                single-line
+            single-line
+        >
+            <v-icon
+            slot="icon"
+            color="teal "
+            size="36"
             >
-                <v-icon
-                slot="icon"
-                color="teal "
-                size="36"
+            mdi-account
+            </v-icon>
+
+                <p class="overline mt-0 mb-0 pt-0 pb-0">
+                    {{ user_data.nombre }} {{ user_data.apellido }}
+                </p>
+                <p class="overline mt-0 mb-0 pt-0 pb-0" style="line-height: 1">
+                    <small>
+                        {{ user_data.seccion.descripcion }}
+                    </small>
+                </p>
+
+            <template v-slot:actions>
+                <v-btn
+                    color="orange darken-1"
+                    icon
                 >
-                mdi-account
-                </v-icon>
-
-                    <p class="overline mt-0 mb-0 pt-0 pb-0">
-                        {{ user_data.nombre }} {{ user_data.apellido }}
-                    </p>
-                    <p class="overline mt-0 mb-0 pt-0 pb-0" style="line-height: 1">
-                        <small>
-                            {{ user_data.seccion.descripcion }}
-                        </small>
-                    </p>
-
-                <template v-slot:actions>
-                    <v-btn
-                        color="orange darken-1"
-                        icon
-                    >
-                        <v-icon>
-                            mdi-bell
-                        </v-icon>
-                    </v-btn>
-                </template>
-            </v-banner>
-        <v-row class="mt-4">
+                    <v-icon>
+                        mdi-bell
+                    </v-icon>
+                </v-btn>
+            </template>
+        </v-banner>
+        <v-row v-if="menu.length > 0" class="mt-4">
             <v-col cols="12" md="4" sm="6" v-for="(item, i) in menu" :key="i">
                 <v-card
                     :color="item.color"
@@ -89,6 +72,12 @@
 
             </v-col>
         </v-row>
+
+        <v-row v-if="menu.length == 0">
+            <v-col class="mt-4">
+                <Alert msg="Debe de solicitar accesos al administrador."></Alert>
+            </v-col>
+        </v-row>
     </div>
 </template>
 
@@ -96,25 +85,15 @@
 
     import request from '@/functions/request'
 
-    export default {
+    import Alert from '@/components/AlertSeleccion'
 
+    export default {
+        components: {
+            Alert
+        },
         data(){
             return{
 
-                items: [
-                    {
-                    color: '#1F7087',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/foster.jpg',
-                    title: 'Supermodel',
-                    artist: 'Foster the People',
-                    },
-                    {
-                    color: '#952175',
-                    src: 'https://cdn.vuetifyjs.com/images/cards/halcyon.png',
-                    title: 'Halcyon Days',
-                    artist: 'Ellie Goulding',
-                    },
-                ],
                 menu: []
 
             }
