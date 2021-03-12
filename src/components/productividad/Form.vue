@@ -6,21 +6,13 @@
                     <v-col>
                          <v-card outlined>
                             <v-card-text>
-                                <v-row dense>
-                                    <v-col>
-                                        <v-autocomplete v-model="codarea" :items="areas" item-text="descripcion" item-value="codarea" outlined single-line label="Procesos" @change="obtener_colaboradores()"></v-autocomplete>
-                                    </v-col>
-                                    <v-col>
-                                        <v-autocomplete v-model="nit_colaborador" :items="colaboradores" item-text="nombre_completo" item-value="nit" hide-details outlined single-line label="Colaborador" @change="obtener_datos()"></v-autocomplete>
-                                    </v-col>
-                                </v-row>
+                                <Filtro :disabled_seccion="!secciones" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
                             </v-card-text>
                         </v-card>
-
                     </v-col>
                 </v-row>
                 <v-row v-if="nit_colaborador" class="mt-2">
-                    <v-col v-if="criterio.metodo_calificacion == 'verificacion'">
+                    <!-- <v-col v-if="criterio.metodo_calificacion == 'verificacion'">
                         <v-btn-toggle>
                             <v-btn @click="marcar_todos()">
                                 <v-icon>
@@ -29,7 +21,7 @@
                                 </v-icon>
                             </v-btn>
                         </v-btn-toggle>
-                    </v-col>
+                    </v-col> -->
                     <v-col class="pb-0" v-for="(item, key) in items" :key="key" cols="12">
                         
                         <v-card outlined v-if="criterio.metodo_calificacion == 'ponderacion'">
@@ -142,10 +134,15 @@
 <script>
 
     import request from '@/functions/request'
+    import Filtro from '@/components/Filtro'
 
     export default {
+        components: {
+            Filtro
+        },
         props: {
-            closed: Boolean
+            closed: Boolean,
+            secciones: Boolean
         },
         data(){
             return{
@@ -175,39 +172,11 @@
                 })
 
             },
-            obtener_areas(){
-
-				const data = {
-					url: 'obtener_areas',
-					data: null
-				}
-
-				request.post(data)
-				.then((response) => {
-					this.areas = response.data
-				})
-
-			},
             registrar(){
 
 
 
             },
-            obtener_colaboradores(){
-
-				const data = {
-					url: 'obtener_colaboradores',
-					data: {
-						codarea: this.codarea
-					}
-				}
-
-				request.post(data)
-				.then((response) => {
-					this.colaboradores = response.data
-				})
-
-			},
             marcar_todos(){
 
                 this.check_all = !this.check_all
@@ -232,16 +201,18 @@
             closed: function(){
 
                 if (!closed) {
+
                     this.obtener_datos()
-                    this.obtener_areas()
+
                 }
 
             }
+
         },
         mounted(){
 
             this.obtener_datos()
-            this.obtener_areas()
+
         }
     }
 </script>

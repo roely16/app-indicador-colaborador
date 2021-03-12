@@ -69,6 +69,17 @@
                 this.codarea = item.codarea
                 this.nit_colaborador = item.id_persona
 
+            },
+            set_seccion(){
+
+                if (this.disabled_seccion) {
+                    
+                    const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
+                    this.codarea = usuario.codarea
+
+                }
+
             }
 
         },
@@ -81,10 +92,11 @@
 
                 }
 
-            },
+            }
         },
         mounted(){
 
+            this.set_seccion()
             this.obtener_areas()
 
         }

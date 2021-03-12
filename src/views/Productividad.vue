@@ -46,7 +46,11 @@
 					hide-default-footer
 					:page.sync="page"
 					@page-count="pageCount = $event"
-				></v-data-table>
+				>
+
+					
+
+				</v-data-table>
 
 				<v-pagination
 					class="mt-4 mb-4"
@@ -58,7 +62,7 @@
 
 		<Modal :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form @closeModal="close_modal"></Form>
+				<Form :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 	</div>
