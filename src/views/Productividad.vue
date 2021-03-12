@@ -18,30 +18,7 @@
 			<!-- Tabla de registros -->
 			<v-card-text>
 
-				<v-row align="center" class="mb-4">
-					<!-- <v-col md="4">
-						<v-autocomplete
-							v-model="codarea"
-							:items="areas"
-							item-text="descripcion"
-							item-value="codarea"
-							outlined
-							label="Procesos"
-							hide-details
-							@change="obtener_colaboradores()"
-						></v-autocomplete>
-					</v-col>
-					<v-col md="4">
-						<v-autocomplete
-							v-model="colaborador"
-							:items="colaboradores"
-							item-text="nombre_completo"
-							item-value="nit"
-							outlined
-							label="Colaborador"
-							hide-details
-						></v-autocomplete>
-					</v-col> -->
+				<v-row align="center" class="mb-2">
 					<v-col cols="4">
 						<v-text-field
 							prepend-inner-icon="mdi-magnify"
@@ -53,7 +30,7 @@
 						></v-text-field>
 					</v-col>
 					<v-col align="end">
-						<v-btn color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
+						<v-btn :disabled="!escritura" color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
 							<v-icon>
 								mdi-plus
 							</v-icon>
@@ -93,6 +70,7 @@
 	import Form from '@/components/productividad/Form.vue'
 
 	import request from '@/functions/request.js'
+	import verificar_permisos from '@/functions/verificar_permisos'
 
 	export default {
 		components: {
@@ -101,7 +79,6 @@
 		},
 		data(){
 			return{
-				items: ['foo', 'bar', 'fizz', 'buzz'],
 				codarea: null,
 				colaborador: null,
 				page: 1,
@@ -125,6 +102,8 @@
 				],
 				headers: [],
 				reportes: [],
+				escritura: false,
+				secciones: false
 			}
 		},
 		methods: {
@@ -146,7 +125,6 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.areas = response.data
 				})
 
@@ -176,15 +154,27 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.headers = response.data.headers
 					this.reportes = response.data.items
+				})
+
+			},
+			verificar_permisos(){
+
+				const url = this.$route.name
+
+				verificar_permisos.check(url)
+				.then((response) => {
+					this.escritura = response.data.escritura
+					this.secciones = response.data.secciones
 				})
 
 			}
 
 		},
 		mounted(){
+
+			this.verificar_permisos()
 
 			this.obtener_areas()
 			this.obtener_reportes()

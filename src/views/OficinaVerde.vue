@@ -1,7 +1,7 @@
 <template>
     <div>
 		<v-card class="mt-4 pl-4 pr-4">
-			<v-card-text>
+			<v-card-text class="mb-0 pb-0">
 				<v-row>
 					<v-col>
 						<v-breadcrumbs
@@ -11,13 +11,7 @@
 						></v-breadcrumbs>
 					</v-col>
 					<v-spacer></v-spacer>
-					<v-col align="end">
-						<v-btn color="success" @click="mostrar_modal()" large>
-							<v-icon>
-								mdi-plus
-							</v-icon>
-						</v-btn>
-					</v-col>
+					
 				</v-row>
 			</v-card-text>
 
@@ -25,38 +19,22 @@
 			<v-card-text>
 
 				<v-row align="center" class="mb-2">
-					<v-col md="4">
-						<v-autocomplete
-							v-model="codarea"
-							:items="areas"
-							item-text="descripcion"
-							item-value="codarea"
-							filled
-							label="Procesos"
-							hide-details
-							@change="obtener_colaboradores()"
-						></v-autocomplete>
-					</v-col>
-					<v-col md="4">
-						<v-autocomplete
-							v-model="colaborador"
-							:items="colaboradores"
-							item-text="nombre_completo"
-							item-value="nit"
-							filled
-							label="Colaborador"
-							hide-details
-						></v-autocomplete>
-					</v-col>
-					<v-col>
+					<v-col cols="4">
 						<v-text-field
-							append-icon="mdi-magnify"
+							prepend-inner-icon="mdi-magnify"
 							label="Buscar..."
 							single-line
 							hide-details
-							filled
+							outlined
 							autocomplete="off"
 						></v-text-field>
+					</v-col>
+					<v-col align="end">
+						<v-btn :disabled="!escritura" color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
+							<v-icon>
+								mdi-plus
+							</v-icon>
+						</v-btn>
 					</v-col>
 				</v-row>
 
@@ -92,6 +70,7 @@
 	import Form from '@/components/productividad/Form.vue'
 
 	import request from '@/functions/request.js'
+	import verificar_permisos from '@/functions/verificar_permisos'
 
 	export default {
 		components: {
@@ -100,7 +79,6 @@
 		},
 		data(){
 			return{
-				items: ['foo', 'bar', 'fizz', 'buzz'],
 				codarea: null,
 				colaborador: null,
 				page: 1,
@@ -124,6 +102,8 @@
 				],
 				headers: [],
 				reportes: [],
+				escritura: false,
+				secciones: false
 			}
 		},
 		methods: {
@@ -145,7 +125,6 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.areas = response.data
 				})
 
@@ -161,7 +140,6 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.colaboradores = response.data
 				})
 
@@ -175,9 +153,19 @@
 
 				request.post(data)
 				.then((response) => {
-					console.log(response.data)
 					this.headers = response.data.headers
 					this.reportes = response.data.items
+				})
+
+			},
+			verificar_permisos(){
+
+				const url = this.$route.name
+
+				verificar_permisos.check(url)
+				.then((response) => {
+					this.escritura = response.data.escritura
+					this.secciones = response.data.secciones
 				})
 
 			}
@@ -185,6 +173,8 @@
 		},
 		mounted(){
 
+			this.verificar_permisos()
+			
 			this.obtener_areas()
 			this.obtener_reportes()
 
