@@ -59,7 +59,19 @@
 
         <Modal @closeModal="clear" ref="modal" :title="title" :width="width">
             <template #form>
-                <FormPermisos @closeModal="close_modal" :prop_codarea="codarea" :prop_nit="nit" ref="form"></FormPermisos>
+                <v-container>
+                    <v-row>
+                        <v-col>
+                            <v-card outlined>
+                                <v-card-text>
+                                    <Filtro ref="filtro" :prop_nit="nit" :prop_codarea="codarea" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit = value }"></Filtro>
+                                </v-card-text>
+                            </v-card>
+                        </v-col>
+                    </v-row>
+                </v-container>
+                
+                <FormPermisos @updateTable="obtener_permisos" @closeModal="close_modal" :prop_codarea="codarea" :prop_nit="nit" ref="form"></FormPermisos>
             </template>
         </Modal>
 
@@ -70,13 +82,16 @@
 
     import Modal from '@/components/Modal'
     import FormPermisos from '@/components/configuracion/FormPermisos'
+    import Filtro from '@/components/Filtro.vue'
 
     import request from '@/functions/request'
+    import alert from '@/functions/alert'
 
     export default {
         components: {
             Modal,
-            FormPermisos
+            FormPermisos,
+            Filtro
         },
         data () {
             return {
@@ -120,27 +135,75 @@
 
                 this.title = "Editar Permisos"
                 this.width = "900"
-                this.nit = item.id_persona
 
+                this.nit = item.id_persona
                 this.codarea = item.codarea
+               
                 this.$refs.modal.show()
+                .then(() => {
+
+                    this.$refs.filtro.set(item)
+
+                })
+                
 
             },
-            eliminar(){
+            eliminar(item){
+
+                const alert_msg = {
+                    title: "¿Está seguro?",
+                    message: "Una vez eliminados no se podrán recuperar",
+                    type: "warning",
+                    confirm_text: "ELIMINAR!",
+                    cancel_text: "Cancelar"
+                }
+
+                alert.show_confirm(alert_msg)
+                .then((result) => {
+                    
+                    if (result.isConfirmed) {
+                        
+                        const data = {
+                            url: 'eliminar_permisos',
+                            data: {
+                                id_persona: item.id_persona
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            
+                            alert.show(response.data).
+                            then(() => {
+
+                                this.obtener_permisos()
+
+                            })
+
+                        })
+
+
+                    }
+
+                })
 
             },
             close_modal(){
 
-                this.nit = null
-                this.codarea = null
                 this.$refs.modal.close()
 
             },
             clear(){
 
-                console.log('clear')
-                this.nit = null
-                this.codarea = null
+               this.nit = null
+               this.codarea = null
+
+                const data = {
+                    id_persona: null,
+                    codarea: null
+                }
+
+               this.$refs.filtro.set(data)
 
             }
 

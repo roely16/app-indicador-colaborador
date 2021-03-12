@@ -48,7 +48,7 @@
             }
         },
         methods: {
-            show(){
+            async show(){
                 this.dialog = true
             },
             close(){

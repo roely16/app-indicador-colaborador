@@ -123,9 +123,13 @@
 
             obtener_menu(){
 
+                const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
                 const data = {
                     url: 'obtener_menu',
-                    data: null
+                    data: {
+                        nit: usuario.nit
+                    }
                 }
 
                 request.post(data)

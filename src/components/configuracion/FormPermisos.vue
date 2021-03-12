@@ -2,25 +2,7 @@
     <div>
         <v-container>
             <v-form @submit.prevent="registrar()">
-                {{ prop_nit }}
-                <v-row>
-                    <v-col>
-                        <v-card outlined>
-                            <v-card-text>
-                                <Filtro 
-                                    @change_data="(data) => {
-                                        codarea = data.codarea
-                                        nit = data.nit
-                                    }" 
-                                    ref="filtro"
-                                    :prop_codarea="prop_codarea"
-                                    :prop_nit="prop_nit"
-                                ></Filtro>
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                </v-row>
-                <v-row v-if="nit">
+                <v-row v-if="prop_nit">
                     <v-col cols="12" md="4" sm="6" v-for="(item, i) in menu" :key="i">
                         <v-card
                             :color="item.color"
@@ -74,7 +56,7 @@
                     </v-col>
                 </v-row>
 
-                <AlertSeleccion v-if="!nit" msg="Debe de seleccionar primero a un colaborador."></AlertSeleccion>
+                <AlertSeleccion v-if="!prop_nit" msg="Debe de seleccionar primero a un colaborador."></AlertSeleccion>
 
                 <v-row class="mt-4">
                     <v-col class="text-center">
@@ -93,7 +75,7 @@
 
 <script>
 
-    import Filtro from '@/components/Filtro'
+    // import Filtro from '@/components/Filtro'
 
     import request from '@/functions/request'
     import alert from '@/functions/alert'
@@ -103,13 +85,12 @@
     export default {
         props: {
             prop_nit: {
-                type: String,
-                default: null
+                type: String
             },
             prop_codarea: String
         },  
         components: {
-            Filtro,
+            // Filtro,
             AlertSeleccion
         },
         data(){
@@ -126,11 +107,9 @@
                 const data = {
                     url: 'obtener_permisos_usuario',
                     data: {
-                        nit: this.nit
+                        nit: this.prop_nit
                     }
                 }
-                
-                console.log(data)
                 
                 request.post(data)
                 .then((response) => {
@@ -142,8 +121,8 @@
 
                 const permisos = {
                     permisos: this.menu,
-                    nit: this.nit,
-                    codarea: this.codarea
+                    nit: this.prop_nit,
+                    codarea: this.prop_codarea
                 }
 
                 const data = {
@@ -156,10 +135,14 @@
                     
                     if (response.data) {
 
-                        alert.show(response.data)
+                        alert.show(response.data).
+                        then(() => {
+
+                            this.$emit('updateTable')
+
+                        })
 
                     }
-                    console.log(response.data)
                 })
 
             },
@@ -168,7 +151,7 @@
                 this.codarea = null
                 this.nit = null
 
-            }
+            },
 
         },
         computed: {
@@ -194,22 +177,22 @@
 
         },
         watch: {
-            nit: function(){
-
-                this.obtener_permisos()
-
-            },
             prop_nit: function(val){
-                                
-                this.nit = val
+                
+                if (val) {
+
+                    this.obtener_permisos()    
+
+                }
+                
 
             }
         },
-        mounted(){
+        created(){
 
             if (this.prop_nit) {
                 
-                this.nit = this.prop_nit
+                this.obtener_permisos()
 
             }
 
