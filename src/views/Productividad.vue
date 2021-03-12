@@ -21,6 +21,7 @@
 				<v-row align="center" class="mb-2">
 					<v-col cols="4">
 						<v-text-field
+							v-model="search"
 							prepend-inner-icon="mdi-magnify"
 							label="Buscar..."
 							single-line
@@ -39,20 +40,48 @@
 				</v-row>
 
 				<v-data-table
+					:search="search"
 					:headers="headers"
 					:items="reportes"
-					:items-per-page="5"
+					:items-per-page="10"
 					class="elevation-0"
 					hide-default-footer
 					:page.sync="page"
 					@page-count="pageCount = $event"
 				>
 
-					
+					<template slot="no-data">
+						
+						<Alert msg="No hay datos disponibles"></Alert>
+
+					</template>
+
+					<template v-slot:[`item.calificacion`]="{item}">
+						<v-chip small label :color="item.color" dark>
+							{{ item.calificacion }}
+						</v-chip>
+					</template>
+
+					<template v-slot:[`item.action`]="{ item }">
+                        <v-btn @click="mostrar_editar(item)" x-small icon color="blue accent-4">
+                            <v-icon>
+                                mdi-pencil
+                            </v-icon>
+                        </v-btn>
+
+                        <v-btn @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
+                            <v-icon>
+                                mdi-delete
+                            </v-icon>
+                        </v-btn>
+
+                    </template>
+
 
 				</v-data-table>
 
 				<v-pagination
+					v-if="reportes.length > 0"
 					class="mt-4 mb-4"
 					v-model="page"
 					:length="pageCount"
@@ -62,7 +91,7 @@
 
 		<Modal :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form :secciones="secciones" @closeModal="close_modal"></Form>
+				<Form @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 	</div>
@@ -76,13 +105,17 @@
 	import request from '@/functions/request.js'
 	import verificar_permisos from '@/functions/verificar_permisos'
 
+	import Alert from '@/components/AlertSeleccion'
+
 	export default {
 		components: {
 			Modal,
-			Form
+			Form,
+			Alert
 		},
 		data(){
 			return{
+				search: null,
 				codarea: null,
 				colaborador: null,
 				page: 1,
@@ -151,13 +184,18 @@
 			},
 			obtener_reportes(){
 
+				const url = this.$route.name
+
 				const data = {
-					url: 'obtener_reportes',
-					data: null
+					url: 'obtener_evaluaciones',
+					data: {
+						url: url
+					}
 				}
 
 				request.post(data)
 				.then((response) => {
+					console.log(response.data)
 					this.headers = response.data.headers
 					this.reportes = response.data.items
 				})
@@ -172,6 +210,12 @@
 					this.escritura = response.data.escritura
 					this.secciones = response.data.secciones
 				})
+
+			},
+			mostrar_editar(){
+
+			},
+			eliminar(){
 
 			}
 

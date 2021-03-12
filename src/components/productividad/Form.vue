@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-container>
-            <v-form @submit.prevent="registrar()">
+            <v-form @submit.prevent="registrar()" v-model="valid" ref="form">
                 <v-row dense class="pb-0">
                     <v-col>
                          <v-card outlined>
@@ -12,16 +12,7 @@
                     </v-col>
                 </v-row>
                 <v-row v-if="nit_colaborador" class="mt-2">
-                    <!-- <v-col v-if="criterio.metodo_calificacion == 'verificacion'">
-                        <v-btn-toggle>
-                            <v-btn @click="marcar_todos()">
-                                <v-icon>
-                                    {{ check_all ? 'mdi-close-circle' : 'mdi-check-all' }}
-                                    mdi-check-all
-                                </v-icon>
-                            </v-btn>
-                        </v-btn-toggle>
-                    </v-col> -->
+                    
                     <v-col class="pb-0" v-for="(item, key) in items" :key="key" cols="12">
                         
                         <v-card outlined v-if="criterio.metodo_calificacion == 'ponderacion'">
@@ -34,25 +25,16 @@
                                         <v-radio-group
                                             row
                                             hide-details
+                                            v-model="item.calificacion"
+                                            :rules="[v => !!v]"
                                         >
                                             <v-radio
-                                                label="Excelente"
-                                                value="4"
-                                                
+                                                :label="calificacion.nombre"
+                                                :value="calificacion.valor"
+                                                v-for="(calificacion, key) in item.calificaciones"
+                                                :key="key"
                                             ></v-radio>
-                                            <v-radio
-                                                label="Bueno"
-                                                value="3"
-                                            ></v-radio>
-                                            <v-radio
-                                                label="Regular"
-                                                value="2"
-                                                
-                                            ></v-radio>
-                                            <v-radio
-                                                label="Malo"
-                                                value="1"
-                                            ></v-radio>
+                                            
                                         </v-radio-group>
                                     </v-col>
                                 </v-row>
@@ -134,6 +116,7 @@
 <script>
 
     import request from '@/functions/request'
+    import alert from '@/functions/alert'
     import Filtro from '@/components/Filtro'
 
     export default {
@@ -152,7 +135,8 @@
                 colaboradores: [],
                 codarea: null,
                 check_all: false,
-                nit_colaborador: null
+                nit_colaborador: null,
+                valid: true
             }
         },
         methods: {
@@ -174,8 +158,34 @@
             },
             registrar(){
 
+                this.$refs.form.validate()
 
+                if (this.valid) {
+                    
+                    const url = this.$route.name
 
+                    const data = {
+                        url: 'registrar_evaluacion',
+                        data: {
+                            url: url,
+                            items: this.items,
+                            id_persona: this.nit_colaborador,
+                            criterio: this.criterio
+                        }
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+
+                        alert.show(response.data)
+                        .then(() => {
+                            this.$emit('update')
+                        })
+                        
+                    })
+
+                }
+                
             },
             marcar_todos(){
 

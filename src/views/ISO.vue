@@ -58,7 +58,7 @@
 
 		<Modal :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form @closeModal="close_modal"></Form>
+				<Form :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 	</div>
