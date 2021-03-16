@@ -43,12 +43,12 @@
 
                         <v-row align="center" v-if="criterio.metodo_calificacion == 'verificacion'" >
                             <v-col cols="8">
-                                <v-btn @click="click_item(item)" :color="item.check ? 'success' : ''" block>
+                                <v-btn :dark="item.check" @click="click_item(item)" :color="item.check ? 'red' : ''" block>
                                     {{ item.descripcion }}
                                 </v-btn>
                             </v-col>
                             <v-col cols="2">
-                                <v-text-field v-model="item.value" :disabled="!item.editable" autocomplete="off" dense hide-details outlined></v-text-field>
+                                <v-text-field type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable" autocomplete="off" dense hide-details outlined></v-text-field>
                             </v-col>
                             <v-col>
                                 <v-btn @click="item.editable = !item.editable" x-small color="blue darken-4" icon>
@@ -63,7 +63,7 @@
                                 </v-btn>
                             </v-col>
                             <v-col v-if="item.show_description" cols="8">
-                                <v-textarea outlined :rows="3"></v-textarea>
+                                <v-textarea outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
                             </v-col>
                         </v-row>
                     </v-col>
@@ -76,7 +76,7 @@
                             </v-col>
                             <v-col cols="2" class="text-center">
                                 <v-btn large block color="success">
-                                    100
+                                    {{ total_evaluacion }}
                                 </v-btn>
                             </v-col>
                         </v-row>
@@ -203,7 +203,7 @@
 
                 item.check = !item.check
 
-                item.value = item.check ? 100 : 0
+                item.calificacion = item.check ? 0 : 100
 
             }
         },
@@ -219,6 +219,25 @@
             }
 
         },
+        computed: {
+            total_evaluacion: function(){
+                
+                let total = 0
+
+                this.items.forEach(item => {
+                    
+                    console.log(item)
+
+                    total += (parseInt(item.calificacion) * item.valor)
+
+                });
+
+                let result = total / this.criterio.valor
+
+                return result > 100 ? 100 : result.toFixed(2)
+
+            }
+        },
         mounted(){
 
             this.obtener_datos()
@@ -228,5 +247,7 @@
 </script>
 
 <style>
-
+    .centered-input input {
+        text-align: center
+    }
 </style>
