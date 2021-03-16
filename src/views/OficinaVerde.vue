@@ -81,6 +81,7 @@
 					class="mt-4 mb-4"
 					v-model="page"
 					:length="pageCount"
+					v-if="reportes.length > 0"
 				></v-pagination>
 			</v-card-text>
 		</v-card>
@@ -180,10 +181,14 @@
 
 				const url = this.$route.name
 
+				const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
 				const data = {
 					url: 'obtener_evaluaciones',
 					data: {
-						url: url
+						url: url,
+						nit: usuario.nit,
+						codarea: usuario.codarea
 					}
 				}
 

@@ -186,10 +186,14 @@
 
 				const url = this.$route.name
 
+				const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
 				const data = {
 					url: 'obtener_evaluaciones',
 					data: {
-						url: url
+						url: url,
+						nit: usuario.nit,
+						codarea: usuario.codarea
 					}
 				}
 
