@@ -67,7 +67,7 @@
 							</v-icon>
 						</v-btn>
 
-						<v-btn @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
+						<v-btn :disabled="!escritura" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
 							<v-icon>
 								mdi-delete
 							</v-icon>
