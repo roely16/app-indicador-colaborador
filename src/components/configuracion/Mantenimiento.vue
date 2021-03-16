@@ -57,12 +57,12 @@
                 >
 
                     <template v-slot:[`item.valor`] = "{ item }">
-                        <v-chip v-if="item.valor" label outlined color="deep-orange darken-1" dark small>
+                        <v-chip v-if="item.valor" label outlined color="blue" dark small>
                             {{ item.valor }}%
                         </v-chip>
 
-                        <v-chip class="ml-2" v-if="item.valor_iso" label outlined color="blue" dark small>
-                            {{ item.valor_iso }}%
+                        <v-chip class="ml-2" v-if="item.valor_no_iso" label outlined color="deep-orange darken-1" dark small>
+                            {{ item.valor_no_iso }}%
                         </v-chip>
 
                     </template>

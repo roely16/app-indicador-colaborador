@@ -11,8 +11,20 @@
                         </v-card>
                     </v-col>
                 </v-row>
+
                 <v-row v-if="nit_colaborador" class="mt-2">
                     
+                    <!-- Mostrar detalle de Sección, si es asesor o si es ISO -->
+
+                    <v-col cols="12">
+                        <v-chip dark :color="detalle_colaborador.iso == '1' ? 'blue' : 'deep-orange darken-1'" label>
+                            {{ detalle_colaborador.iso == '1' ? 'ISO' : 'NO ISO' }}
+                        </v-chip>
+                        <v-chip dark :color="detalle_colaborador.asesor == '1' ? 'cyan darken-4' : 'blue-grey darken-2'" label class="ml-2">
+                            {{ detalle_colaborador.asesor == '1' ? 'ASESOR' : 'COLABORADOR' }}
+                        </v-chip>
+                    </v-col>
+
                     <v-col class="pb-0" v-for="(item, key) in items" :key="key" cols="12">
                         
                         <v-card outlined v-if="criterio.metodo_calificacion == 'ponderacion'">
@@ -136,7 +148,8 @@
                 codarea: null,
                 check_all: false,
                 nit_colaborador: null,
-                valid: true
+                valid: true,
+                detalle_colaborador: {}
             }
         },
         methods: {
@@ -145,7 +158,8 @@
                 const data = {
                     url: 'datos_reporte',
                     data: {
-                        url: this.$route.name
+                        url: this.$route.name,
+                        nit: this.nit_colaborador
                     }
                 }
 
@@ -153,6 +167,7 @@
                 .then((response) => {
                     this.criterio = response.data.criterio
                     this.items = response.data.items
+                    this.detalle_colaborador = response.data.detalle_colaborador
                 })
 
             },
@@ -216,6 +231,17 @@
 
                 }
 
+            },
+            nit_colaborador: function(val){
+
+                console.log(val);
+
+                if (val) {
+                    
+                    this.obtener_datos()
+
+                }
+
             }
 
         },
@@ -240,7 +266,7 @@
         },
         mounted(){
 
-            this.obtener_datos()
+            //this.obtener_datos()
 
         }
     }
