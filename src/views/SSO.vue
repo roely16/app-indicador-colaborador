@@ -19,10 +19,10 @@
             <v-card-text>
                 <v-row class="mb-4">
                     <v-col cols="6">
-                        <Grupos></Grupos>
+                        <Grupos :item="item"></Grupos>
                     </v-col>
                     <v-col>
-                        <Secciones></Secciones>
+                        <Secciones @dragItem="(item) => { onDrag(item) }"></Secciones>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -56,6 +56,16 @@
 						href: 'breadcrumbs_link_1',
 					},
 				],
+                item: null
+
+            }
+        },
+        methods: {
+
+            onDrag(item){
+
+                this.item = item
+                console.log(item);
 
             }
         }

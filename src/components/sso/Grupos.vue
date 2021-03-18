@@ -21,8 +21,7 @@
             </v-card-text>
 
             <v-card-text class="mt-2 pt-0">
-
-                <v-card elevation="1" class="mb-2" v-for="(grupo, index) in grupos" :key="index">
+                <v-card @drop='onDrop($event, grupo)' @dragover.prevent @dragenter.prevent elevation="1" class="mb-2" v-for="(grupo, index) in grupos" :key="index">
                     <v-card-text>
                         <v-row>
                             <v-col>
@@ -79,6 +78,9 @@
     import request from '@/functions/request'
 
     export default {
+        props: {
+            item: Object
+        },
         components: {
             Alert,
             Modal,
@@ -117,6 +119,26 @@
                 request.post(data)
                 .then((response) => {
                     this.grupos = response.data
+                    console.log(response.data)
+                })
+
+            },
+            onDrop (evt, grupo) {
+               
+                grupo.expand = true
+
+                const integrante = {
+                    id_persona: this.item.nit,
+                    id_grupo: grupo.id
+                }
+
+                const data = {
+                    url: 'agregar_integrante',
+                    data: integrante
+                }
+
+                request.post(data)
+                .then((response) => {
                     console.log(response.data)
                 })
 

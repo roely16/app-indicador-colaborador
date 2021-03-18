@@ -19,7 +19,7 @@
                     <v-list max-height="600">
                         <v-card class="mb-2" elevation="1" v-for="(seccion, index) in secciones" :key="index">
                             <v-card-text>
-                                <v-row dense draggable>
+                                <v-row dense>
                                     <v-col cols="10">
                                         <span class="overline">{{ seccion.descripcion }}</span>
                                     </v-col>
@@ -37,6 +37,8 @@
                                         <v-list-item
                                             v-for="empleado in seccion.empleados"
                                             :key="empleado.nit"
+                                            draggable
+                                            @dragstart='startDrag($event, empleado)'
                                         >
 
                                             <v-list-item-avatar>
@@ -84,6 +86,12 @@
                     console.log(response.data)
                     this.secciones = response.data
                 })
+
+            },
+            // eslint-disable-next-line no-unused-vars
+            startDrag(event, item){
+
+                this.$emit('dragItem', item)
 
             }
 
