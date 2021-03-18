@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <v-row class="mt-10" align="center" justify="center">
+        <v-row :class="margin_top" align="center" justify="center">
             <v-col cols="12">
                 <v-row justify="center">
                     <v-col cols="2">
@@ -9,7 +9,7 @@
                     </v-col>
                 </v-row>
             </v-col>
-            <v-col class="text-center" cols="4">
+            <v-col class="text-center" cols="12">
                <p class="overline">
                    {{ msg }}
                </p>
@@ -22,7 +22,11 @@
 <script>
     export default {
         props: {
-            msg: String
+            msg: String,
+            margin_top: {
+                type: String,
+                default: 'mt-10'
+            }
         }
     }
 </script>
