@@ -17,7 +17,7 @@
             <v-card-text  style="overflow-y: scroll;" class="mt-0 pt-0">
                 
                     <v-list max-height="600">
-                        <v-card class="mb-2" elevation="1" v-for="(seccion, index) in secciones" :key="index">
+                        <v-card :draggable="seccion.drag" :color="seccion.color_card" @dragstart='seccion.drag ? startDragSeccion($event, seccion) : null' @dragend.prevent="dragLeave(seccion)" hover class="mb-2" elevation="1" v-for="(seccion, index) in secciones" :key="index">
                             <v-card-text>
                                 <v-row dense>
                                     <v-col cols="10">
@@ -34,21 +34,22 @@
                                 </v-row>
                                 <v-row v-if="seccion.expand">
                                     <v-col>
-                                        <v-list-item
-                                            v-for="empleado in seccion.empleados"
-                                            :key="empleado.nit"
-                                            draggable
-                                            @dragstart='startDrag($event, empleado)'
-                                        >
-
-                                            <v-list-item-avatar>
-                                                <v-img src="https://cdn.vuetifyjs.com/images/lists/1.jpg"></v-img>
-                                            </v-list-item-avatar>
-                                            <v-list-item-content>
-                                                <v-list-item-title>{{ empleado.nombre }} {{ empleado.apellido }}</v-list-item-title>
-                                            </v-list-item-content>
-                                            
-                                        </v-list-item>
+                                        <v-card style="cursor: pointer" :hover="empleado.hover" :color="empleado.color_card" outlined v-for="empleado in seccion.empleados" :key="empleado.nit" class="mb-2" draggable @dragstart='startDrag($event, empleado, seccion)' @dragend.prevent="dragLeave(empleado)">
+                                            <v-card-text class="pt-2 pb-2">
+                                                <v-row dense align="center">
+                                                    <v-col cols="1" class="mr-4">
+                                                        <v-avatar size="40">
+                                                            <v-img src="https://cdn.vuetifyjs.com/images/lists/1.jpg"></v-img>
+                                                        </v-avatar>
+                                                    </v-col>
+                                                    <v-col>
+                                                        <span>
+                                                            {{ empleado.nombre }} {{ empleado.apellido }}
+                                                        </span>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-text>
+                                        </v-card>
                                     </v-col>
                                 </v-row>
                             </v-card-text>
@@ -69,7 +70,7 @@
         data(){
             return{
                 secciones: [],
-                
+                select_empleado: null
             }
         },
         methods: {
@@ -83,15 +84,29 @@
 
                 request.post(data)
                 .then((response) => {
-                    console.log(response.data)
                     this.secciones = response.data
                 })
 
             },
             // eslint-disable-next-line no-unused-vars
-            startDrag(event, item){
+            startDrag(event, item, seccion){
 
+                seccion.drag = false
+
+                item.color_card = "grey lighten-2"
                 this.$emit('dragItem', item)
+
+            },
+            dragLeave(empleado){
+
+                empleado.color_card = null
+                empleado.drag = true
+
+            },
+            startDragSeccion(event, item){
+
+                item.color_card = "grey lighten-2"
+                this.$emit('dragSeccion', item)
 
             }
 

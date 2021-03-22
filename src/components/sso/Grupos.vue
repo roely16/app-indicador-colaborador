@@ -3,40 +3,62 @@
         <v-card outlined min-height="500">
 
             <v-card-text class="pb-0 mb-0">
-                <v-btn icon>
-                    <v-icon>
-                        mdi-magnify
-                    </v-icon>
-                </v-btn>
-                <v-btn icon>
-                    <v-icon>
-                        mdi-refresh
-                    </v-icon>
-                </v-btn>
-                <v-btn @click="mostrar_modal()" icon>
-                    <v-icon>
-                        mdi-plus
-                    </v-icon>
-                </v-btn>
+                <v-row>
+                    <v-col cols="4">
+                        <v-btn icon>
+                            <v-icon>
+                                mdi-magnify
+                            </v-icon>
+                        </v-btn>
+                        <v-btn icon>
+                            <v-icon>
+                                mdi-refresh
+                            </v-icon>
+                        </v-btn>
+                        <v-btn @click="mostrar_modal()" icon>
+                            <v-icon>
+                                mdi-plus
+                            </v-icon>
+                        </v-btn>
+                    </v-col>
+                    <v-spacer></v-spacer>
+
+                    <v-col align="end">
+                        <v-scroll-x-transition>
+                            <v-icon
+                                v-if="saved"
+                                color="success"
+                            >
+                                mdi-check
+                            </v-icon>
+                        </v-scroll-x-transition>
+                    </v-col>
+
+                </v-row>
+                
             </v-card-text>
 
             <v-card-text class="mt-2 pt-0">
-                <v-card @drop='onDrop($event, grupo)' @dragover.prevent @dragenter.prevent elevation="1" class="mb-2" v-for="(grupo, index) in grupos" :key="index">
+                <v-card @drop='onDrop($event, grupo)' @dragover.prevent="dragOver(grupo)" @dragleave.prevent="dragLeave(grupo)" @dragend.prevent="dragLeave(grupo)"  @dragenter.prevent :color="grupo.color_card" class="mb-2" v-for="(grupo, index) in grupos" :key="index">
                     <v-card-text>
                         <v-row>
-                            <v-col>
+                            <v-col cols="8">
                                 <span class="overline">
                                     {{ grupo.nombre }}
                                 </span>
                             </v-col>
-                            <v-spacer></v-spacer>
                             <v-col align="end">
-                                 <v-btn color="blue accent-4" x-small icon>
+                                 <v-btn class="mr-1" color="green darken-4" x-small icon>
+                                    <v-icon>
+                                        mdi-account-details
+                                    </v-icon>
+                                </v-btn>
+                                <v-btn class="mr-1" color="blue accent-4" x-small icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
                                 </v-btn>
-                                 <v-btn color="red accent-4" x-small icon>
+                                 <v-btn class="mr-1" color="red accent-4" x-small icon>
                                     <v-icon>
                                         mdi-delete
                                     </v-icon>
@@ -50,7 +72,9 @@
                         </v-row>
                         <v-row v-if="grupo.expand">
                             <v-col cols="12">
-                                <Alert v-if="grupo.integrantes.length <= 0" margin_top="mt-1" msg="El grupo no tiene integrantes."></Alert>
+                                <Alert v-if="grupo.secciones.length <= 0" margin_top="mt-1" msg="El grupo no tiene integrantes."></Alert>
+
+                                <v-treeview selectable item-text="nombre" item-children="integrantes" :items="grupo.secciones"></v-treeview>
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -65,6 +89,13 @@
                 <Form @updateTable="obtener_grupos" @closeModal="close_modal()" ref="form"></Form>
             </template>
         </Modal>
+
+        <Modal ref="modal_detalle_grupo" :width="width" :title="title">
+            <template #form>
+                <FormGrupo @closeModal="close_modal()" ref="form_grupo"></FormGrupo>
+            </template>
+        </Modal>
+
     </div>
 </template>
 
@@ -74,24 +105,31 @@
 
     import Modal from '@/components/Modal'
     import Form from '@/components/sso/Form'
+    import FormGrupo from '@/components/sso/FormGrupo'
 
     import request from '@/functions/request'
+    // eslint-disable-next-line no-unused-vars
+    import alert_sw from '@/functions/alert'
 
     export default {
         props: {
-            item: Object
+            item: Object,
+            seccion: Object
         },
         components: {
             Alert,
             Modal,
-            Form
+            Form,
+            FormGrupo
         },
         data(){
             return{
 
                 grupos: [],
                 width: null,
-                title: null
+                title: null,
+                color_card: null,
+                saved: false
 
             }
         },
@@ -118,29 +156,112 @@
 
                 request.post(data)
                 .then((response) => {
+
                     this.grupos = response.data
-                    console.log(response.data)
+
                 })
 
             },
+            // eslint-disable-next-line no-unused-vars
             onDrop (evt, grupo) {
-               
+                
                 grupo.expand = true
+                
+                if (this.item) {
+                    
+                    const integrante = {
+                        id_persona: this.item.nit,
+                        id_grupo: grupo.id
+                    }
 
-                const integrante = {
-                    id_persona: this.item.nit,
-                    id_grupo: grupo.id
+                    const data = {
+                        url: 'agregar_integrante',
+                        data: integrante
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+
+                        grupo.color_card = null
+
+                        if (response.data.status != 200) {
+                            
+                            alert_sw.show(response.data)
+
+                        }else{
+
+                            this.saved = true
+
+                            setTimeout(() => this.saved = false, 2000)
+
+                            let seccion = grupo.secciones.filter(seccion => seccion.codarea == response.data.data.codarea)
+
+                            console.log(seccion)
+
+                            if (seccion.length > 0) {
+                                
+                                // Actualizar la sección completa
+                                seccion[0].integrantes = response.data.data.integrantes
+
+                            }else{
+
+                                // Agregar toda la sección
+                                grupo.secciones.push(response.data.data)
+
+                            }
+
+                        }
+
+                    })
+
+                }else{
+
+                    const data = {
+                        url: 'agregar_seccion',
+                        data: {
+                            empleados: this.seccion.empleados,
+                            id_grupo: grupo.id
+                        }
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+
+                        grupo.color_card = null
+
+                        if (response.data.status != 200) {
+                            
+                            alert_sw.show(response.data)
+
+                        }else{
+
+                            this.saved = true
+
+                            setTimeout(() => this.saved = false, 2000)
+
+                            //this.obtener_grupos()
+
+                        }
+
+                    })
+
                 }
+               
+            },
+            dragOver(grupo){
 
-                const data = {
-                    url: 'agregar_integrante',
-                    data: integrante
-                }
+                grupo.color_card = "grey lighten-2"
+                //grupo.expand = true
 
-                request.post(data)
-                .then((response) => {
-                    console.log(response.data)
-                })
+            },
+            dragLeave(grupo){
+
+                grupo.color_card = null
+
+            },
+            selectGrupo(){
+
+
 
             }
 

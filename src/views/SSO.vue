@@ -19,10 +19,10 @@
             <v-card-text>
                 <v-row class="mb-4">
                     <v-col cols="6">
-                        <Grupos :item="item"></Grupos>
+                        <Grupos :item="item" :seccion="seccion"></Grupos>
                     </v-col>
                     <v-col>
-                        <Secciones @dragItem="(item) => { onDrag(item) }"></Secciones>
+                        <Secciones @dragItem="(item) => { onDrag(item) }" @dragSeccion="(item) => { onDragSeccion(item) }"></Secciones>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -56,7 +56,8 @@
 						href: 'breadcrumbs_link_1',
 					},
 				],
-                item: null
+                item: null,
+                seccion: null
 
             }
         },
@@ -65,7 +66,13 @@
             onDrag(item){
 
                 this.item = item
-                console.log(item);
+                this.seccion = null
+
+            },
+            onDragSeccion(item){
+
+                this.seccion = item
+                this.item = null
 
             }
         }
