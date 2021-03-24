@@ -1,18 +1,26 @@
 <template>
     <div>
-        <v-card min-height="700" outlined>
+        <v-card style="overflow-y: scroll;" min-height="700" max-height="700" outlined>
             <v-card-text>
                 <v-row>
                     <v-col>
                         <span class="overline">Integrantes</span>
                     </v-col>
                     <v-col align="end">
-                        <v-btn @click="enable_check = !enable_check" icon>
+                        <v-progress-circular
+                            indeterminate
+                            color="primary"
+                            :width="2"
+                            size="18"
+                            v-if="loading"
+                            class="mr-2"
+                        ></v-progress-circular>
+                        <v-btn :disabled="!id_actividad" @click="enable_check = !enable_check" icon>
                             <v-icon>
                                 {{ enable_check ? 'mdi-account-multiple-remove' : 'mdi-account-multiple-check' }}
                             </v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn @click="asignar_actividad()" :disabled="!checked.length > 0" icon>
                             <v-icon>
                                 mdi-format-list-checks
                             </v-icon>
@@ -88,31 +96,38 @@
 <script>
 
     import request from '@/functions/request'
+    import alert from '@/functions/alert'
 
     export default {
         props: {
-            id_grupo: Number
+            id_grupo: Number,
+            id_actividad: Number
         },
         data(){
             return{
                 secciones: [],
-                enable_check: false
+                enable_check: false,
+                loading: false
             }
         },
         methods: {
 
             obtener_integrantes(){
 
+                this.loading = true
+
                 const data = {
                     url: 'integrantes_grupo',
                     data: {
-                        id_grupo: this.id_grupo
+                        id_grupo: this.id_grupo,
+                        id_actividad: this.id_actividad
                     }
                 }
 
                 request.post(data)
                 .then((response) => {
                     this.secciones = response.data
+                    this.loading = false
                 })
 
             },
@@ -125,6 +140,48 @@
                     integrante.check = seccion.check
 
                 });
+
+            },
+            asignar_actividad(){
+
+                const data_alert = {
+                    title: '¿Está seguro?',
+                    message: 'Se asignará la actividad a las personas seleccionadas!',
+                    type: 'warning',
+                    confirm_text: 'Asignar',
+                    cancel_text: 'Cancelar'
+                }
+
+                alert.show_confirm(data_alert)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+                        
+                        const data = {
+                            url: 'asignar_actividad',
+                            data: {
+                                personas: this.checked,
+                                id_actividad: this.id_actividad
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            console.log(response.data)
+                        })
+
+                    }
+
+                })
+
+            }
+
+        },
+        watch: {
+
+            id_actividad: function(){
+
+                this.obtener_integrantes()
 
             }
 
