@@ -3,6 +3,7 @@
         <v-dialog
             v-model="dialog"
             :max-width="width"
+            :fullscreen="fullscreen"
         >
       
             <v-card>
@@ -40,7 +41,11 @@
     export default {
         props: {
             width: null,
-            title: null
+            title: null,
+            fullscreen: {
+                type: Boolean,
+                default: false
+            }
         },
         data(){
             return{

@@ -48,7 +48,7 @@
                                 </span>
                             </v-col>
                             <v-col align="end">
-                                 <v-btn class="mr-1" color="green darken-4" x-small icon>
+                                 <v-btn @click="modal_detalle_grupo(grupo)" class="mr-1" color="green darken-4" x-small icon>
                                     <v-icon>
                                         mdi-account-details
                                     </v-icon>
@@ -90,9 +90,9 @@
             </template>
         </Modal>
 
-        <Modal ref="modal_detalle_grupo" :width="width" :title="title">
+        <Modal :fullscreen="true" ref="modal_detalle_grupo" :width="width" :title="title">
             <template #form>
-                <FormGrupo @closeModal="close_modal()" ref="form_grupo"></FormGrupo>
+                <FormGrupo :id_grupo="id_grupo" @closeModal="close_modal()" ref="form_grupo"></FormGrupo>
             </template>
         </Modal>
 
@@ -129,7 +129,8 @@
                 width: null,
                 title: null,
                 color_card: null,
-                saved: false
+                saved: false,
+                id_grupo: null
 
             }
         },
@@ -262,6 +263,15 @@
             selectGrupo(){
 
 
+
+            },
+            modal_detalle_grupo(grupo){
+
+                this.title = grupo.nombre
+                this.width = "500"
+                this.id_grupo = grupo.id
+
+                this.$refs.modal_detalle_grupo.show()
 
             }
 
