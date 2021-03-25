@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card outlined min-height="500">
+        <v-card outlined min-height="650">
 
             <v-card-text class="pb-0 mb-0">
                 <v-row>
@@ -10,7 +10,7 @@
                                 mdi-magnify
                             </v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn @click="obtener_grupos()" icon>
                             <v-icon>
                                 mdi-refresh
                             </v-icon>
@@ -53,7 +53,7 @@
                                         mdi-account-details
                                     </v-icon>
                                 </v-btn>
-                                <v-btn class="mr-1" color="blue accent-4" x-small icon>
+                                <v-btn @click="mostrar_editar(grupo)" class="mr-1" color="blue accent-4" x-small icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
@@ -86,7 +86,7 @@
 
         <Modal ref="modal" :width="width" :title="title">
             <template #form>
-                <Form @updateTable="obtener_grupos" @closeModal="close_modal()" ref="form"></Form>
+                <Form :id_grupo="id_grupo" @updateTable="obtener_grupos" @closeModal="close_modal()" ref="form"></Form>
             </template>
         </Modal>
 
@@ -140,7 +140,12 @@
 
                 this.width = "500"
                 this.title = "Crear Grupo"
+                this.id_grupo = null
                 this.$refs.modal.show()
+                .then(() => {
+                    this.$refs.form.clear()
+                })
+                
 
             },
             close_modal(){
@@ -260,11 +265,6 @@
                 grupo.color_card = null
 
             },
-            selectGrupo(){
-
-
-
-            },
             modal_detalle_grupo(grupo){
 
                 this.title = grupo.nombre
@@ -272,6 +272,15 @@
                 this.id_grupo = grupo.id
 
                 this.$refs.modal_detalle_grupo.show()
+
+            },
+            mostrar_editar(grupo){
+
+                this.id_grupo = grupo.id
+
+                this.width = "500"
+                this.title = "Editar Grupo"
+                this.$refs.modal.show()
 
             }
 

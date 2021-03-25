@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card outlined min-height="500">
+        <v-card outlined min-height="650" max-height="650">
 
             <v-card-text class="pb-0 mb-0">
                 <v-btn icon>
@@ -14,9 +14,9 @@
                     </v-icon>
                 </v-btn>
             </v-card-text>
-            <v-card-text  style="overflow-y: scroll;" class="mt-0 pt-0">
+            <v-card-text style="overflow-y: scroll;" class="mt-0 pt-0">
                 
-                    <v-list max-height="600">
+                    <v-list max-height="550">
                         <v-card :draggable="seccion.drag" :color="seccion.color_card" @dragstart='seccion.drag ? startDragSeccion($event, seccion) : null' @dragend.prevent="dragLeave(seccion)" hover class="mb-2" elevation="1" v-for="(seccion, index) in secciones" :key="index">
                             <v-card-text>
                                 <v-row dense>

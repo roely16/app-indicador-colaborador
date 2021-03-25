@@ -28,6 +28,11 @@
                     </v-col>
                 </v-row>
             </v-card-text>
+
+            <v-card-text v-if="secciones.length <= 0">
+                <MsgAlert msg="El grupo no tiene integrantes"></MsgAlert>
+            </v-card-text>
+
             <v-card-text>
                 <v-card class="mb-2" v-for="(seccion, index) in secciones" :key="index">
                     <v-card-text>
@@ -98,7 +103,12 @@
     import request from '@/functions/request'
     import alert from '@/functions/alert'
 
+    import MsgAlert from '@/components/AlertSeleccion'
+
     export default {
+        components: {
+            MsgAlert
+        },
         props: {
             id_grupo: Number,
             id_actividad: Number

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card style="overflow-y: scroll;" min-height="500" max-height="700" outlined>
+        <v-card style="overflow-y: scroll;" min-height="700" max-height="700" outlined>
             <v-card-text>
                 <v-row>
                     <v-col>
