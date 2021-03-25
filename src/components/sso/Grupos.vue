@@ -58,7 +58,7 @@
                                         mdi-pencil
                                     </v-icon>
                                 </v-btn>
-                                 <v-btn class="mr-1" color="red accent-4" x-small icon>
+                                 <v-btn :loading="grupo.deleting" @click="eliminar(grupo)" class="mr-1" color="red accent-4" x-small icon>
                                     <v-icon>
                                         mdi-delete
                                     </v-icon>
@@ -281,6 +281,52 @@
                 this.width = "500"
                 this.title = "Editar Grupo"
                 this.$refs.modal.show()
+
+            },
+            eliminar(grupo){
+
+                const config_alert = {
+                    title: '¿Está seguro?',
+                    message: 'El grupo será eliminado junto con los integrantes y actividades registradas',
+                    placeholder: 'Ingreser ELIMINAR para confirmar',
+                    type: 'warning',
+                    confirm_text: 'ACEPTAR',
+                    cancel_text: 'CANCELAR',
+                    word_validation: 'ELIMINAR'
+                }
+
+                alert_sw.show_confirm_input(config_alert)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+                        
+                        grupo.deleting = true
+
+                        const data = {
+                            url: 'eliminar_grupo',
+                            data: {
+                                id_grupo: grupo.id
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            
+                            if (response.data.status == 200) {
+                                
+                                alert_sw.show(response.data)
+                                .then(() => {
+
+                                    this.obtener_grupos()
+
+                                })
+
+                            }
+
+                        })
+
+                    }
+                })
 
             }
 

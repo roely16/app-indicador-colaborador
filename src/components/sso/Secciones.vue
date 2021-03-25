@@ -39,7 +39,7 @@
                                                 <v-row dense align="center">
                                                     <v-col cols="1" class="mr-4">
                                                         <v-avatar size="40">
-                                                            <v-img src="https://cdn.vuetifyjs.com/images/lists/1.jpg"></v-img>
+                                                            <v-img src="@/assets/img/avatar.png"></v-img>
                                                         </v-avatar>
                                                     </v-col>
                                                     <v-col>
