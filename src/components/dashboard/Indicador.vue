@@ -42,7 +42,7 @@
                             height="25"
                             :color="criterio.color"
                         >
-                            <strong v-if="!criterio.pendiente">{{ Math.ceil(criterio.calificacion) }}</strong>
+                            <strong v-if="!criterio.pendiente">{{ Math.round(criterio.calificacion) }}</strong>
                             <v-icon v-if="criterio.pendiente" size="15">
                                 mdi-account-clock
                             </v-icon>
