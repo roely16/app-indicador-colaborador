@@ -80,7 +80,7 @@
                                                     :color="responsable.cumplio == 'S' ? 'green' : responsable.cumplio == 'N' ? 'red' : null"
                                                 >
                                                     <v-avatar size="40">
-                                                        <v-img src="https://cdn.vuetifyjs.com/images/lists/1.jpg"></v-img>
+                                                        <v-img src="@/assets/img/avatar.png"></v-img>
                                                     </v-avatar>
                                                 </v-badge>
                                             </v-col>

@@ -73,11 +73,19 @@
                             
                             <v-col cols="12">
                                 
-                                <v-divider></v-divider>
-                                
+                                <v-divider class="mb-2"></v-divider>
+
+                                <v-row dense>
+                                    <v-col class="text-right">
+                                        <v-scroll-x-transition>
+                                            <v-btn  v-if="grupo.tree_select.length > 0" color="red accent-4" dark @click="eliminar_integrantes(grupo)" x-small :loading="grupo.deleting_integrante">ELIMINAR</v-btn>
+                                        </v-scroll-x-transition>
+                                    </v-col>
+                                </v-row>
+
                                 <Alert v-if="grupo.secciones.length <= 0" margin_top="mt-1" msg="El grupo no tiene integrantes."></Alert>
 
-                                <v-treeview selectable item-text="nombre" item-children="integrantes" :items="grupo.secciones"></v-treeview>
+                                <v-treeview v-model="grupo.tree_select" shaped hoverable selectable :items="grupo.secciones"></v-treeview>
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -133,7 +141,8 @@
                 title: null,
                 color_card: null,
                 saved: false,
-                id_grupo: null
+                id_grupo: null,
+                tree_select: null
 
             }
         },
@@ -203,12 +212,12 @@
 
                             setTimeout(() => this.saved = false, 2000)
 
-                            let seccion = grupo.secciones.filter(seccion => seccion.codarea == response.data.data.codarea)
+                            let seccion = grupo.secciones.filter(seccion => seccion.id == response.data.data.id)
 
                             if (seccion.length > 0) {
                                 
                                 // Actualizar la sección completa
-                                seccion[0].integrantes = response.data.data.integrantes
+                                seccion[0].children = response.data.data.children
 
                             }else{
 
@@ -248,12 +257,12 @@
 
                             //this.obtener_grupos()
 
-                            let seccion = grupo.secciones.filter(seccion => seccion.codarea == response.data.data.codarea)
+                            let seccion = grupo.secciones.filter(seccion => seccion.id == response.data.data.id)
 
                             if (seccion.length > 0) {
                                 
                                 // Actualizar la sección completa
-                                seccion[0].integrantes = response.data.data.integrantes
+                                seccion[0].children = response.data.data.children
 
                             }else{
 
@@ -343,6 +352,46 @@
                     }
                 })
 
+            },
+            eliminar_integrantes(grupo){
+
+                const config_alert = {
+                    title: '¿Está seguro?',
+                    message: 'Las personas serán eliminadas del grupo junto con sus respectivas actividades asignadas',
+                    placeholder: 'Ingreser ELIMINAR para confirmar',
+                    type: 'warning',
+                    confirm_text: 'ACEPTAR',
+                    cancel_text: 'CANCELAR',
+                    word_validation: 'ELIMINAR'
+                }
+
+                alert_sw.show_confirm_input(config_alert)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+
+                        grupo.deleting_integrante = true
+
+                        const data = {
+                            url: 'eliminar_integrantes',
+                            data: {
+                                id_grupo: grupo.id,
+                                integrantes: grupo.tree_select
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            console.log(response.data)
+                            grupo.deleting_integrante = false
+                            this.obtener_grupos()
+                        })
+
+                    }
+
+                })
+
+                
             }
 
         },
