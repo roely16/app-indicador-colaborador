@@ -4,7 +4,10 @@
 
             <v-card-text class="pb-0 mb-0">
                 <v-row>
-                    <v-col cols="4">
+                    <v-col cols="7">
+                        <span class="overline">Grupos</span>
+                    </v-col>
+                    <v-col cols="5" align="end">
                         <v-btn icon>
                             <v-icon>
                                 mdi-magnify
@@ -20,10 +23,6 @@
                                 mdi-plus
                             </v-icon>
                         </v-btn>
-                    </v-col>
-                    <v-spacer></v-spacer>
-
-                    <v-col align="end">
                         <v-scroll-x-transition>
                             <v-icon
                                 v-if="saved"
@@ -71,7 +70,11 @@
                             </v-col>
                         </v-row>
                         <v-row v-if="grupo.expand">
+                            
                             <v-col cols="12">
+                                
+                                <v-divider></v-divider>
+                                
                                 <Alert v-if="grupo.secciones.length <= 0" margin_top="mt-1" msg="El grupo no tiene integrantes."></Alert>
 
                                 <v-treeview selectable item-text="nombre" item-children="integrantes" :items="grupo.secciones"></v-treeview>
@@ -202,8 +205,6 @@
 
                             let seccion = grupo.secciones.filter(seccion => seccion.codarea == response.data.data.codarea)
 
-                            console.log(seccion)
-
                             if (seccion.length > 0) {
                                 
                                 // Actualizar la sección completa
@@ -246,6 +247,20 @@
                             setTimeout(() => this.saved = false, 2000)
 
                             //this.obtener_grupos()
+
+                            let seccion = grupo.secciones.filter(seccion => seccion.codarea == response.data.data.codarea)
+
+                            if (seccion.length > 0) {
+                                
+                                // Actualizar la sección completa
+                                seccion[0].integrantes = response.data.data.integrantes
+
+                            }else{
+
+                                // Agregar toda la sección
+                                grupo.secciones.push(response.data.data)
+
+                            }
 
                         }
 
@@ -311,7 +326,7 @@
 
                         request.post(data)
                         .then((response) => {
-                            
+
                             if (response.data.status == 200) {
                                 
                                 alert_sw.show(response.data)

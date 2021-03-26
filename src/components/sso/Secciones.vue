@@ -3,16 +3,24 @@
         <v-card outlined min-height="650" max-height="650">
 
             <v-card-text class="pb-0 mb-0">
-                <v-btn icon>
-                    <v-icon>
-                        mdi-magnify
-                    </v-icon>
-                </v-btn>
-                <v-btn icon>
-                    <v-icon>
-                        mdi-refresh
-                    </v-icon>
-                </v-btn>
+                <v-row>
+                    <v-col cols="8">
+                        <span class="overline">Secciones</span>
+                    </v-col>
+                    <v-col cols="4" align="end">
+                        <v-btn icon>
+                            <v-icon>
+                                mdi-magnify
+                            </v-icon>
+                        </v-btn>
+                        <v-btn icon>
+                            <v-icon>
+                                mdi-refresh
+                            </v-icon>
+                        </v-btn>
+                    </v-col>
+                </v-row>
+                
             </v-card-text>
             <v-card-text style="overflow-y: scroll;" class="mt-0 pt-0">
                 

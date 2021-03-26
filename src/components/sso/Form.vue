@@ -138,7 +138,7 @@
                 if (val) {
                     
                     this.detalle_grupo()
-                    
+
                 }
 
             }
