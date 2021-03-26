@@ -46,12 +46,12 @@
                                         mdi-format-list-checks
                                     </v-icon>
                                 </v-btn>
-                                <v-btn color="blue accent-4" x-small icon>
+                                <v-btn @click="mostrar_editar(actividad)" color="blue accent-4" x-small icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
                                 </v-btn>
-                                 <v-btn color="red accent-4" x-small icon>
+                                 <v-btn @click="eliminar_actividad(actividad)" color="red accent-4" x-small icon>
                                     <v-icon>
                                         mdi-delete
                                     </v-icon>
@@ -118,7 +118,7 @@
 
         <Modal :title="title" :width="width" ref="modal">
             <template #form>
-                <FormActividad @updateData="obtener_actividades" @closeModal="close_modal()" :id_grupo="id_grupo" ref="form"></FormActividad>
+                <FormActividad :id_actividad="id_actividad" @updateData="obtener_actividades" @closeModal="close_modal()" :id_grupo="id_grupo" ref="form"></FormActividad>
             </template>
         </Modal>
     </div>
@@ -135,6 +135,8 @@
     import Modal from '@/components/Modal'
     import FormActividad from '@/components/sso/FormActividad'
 
+    import alert from '@/functions/alert'
+
     export default {
         props: {
             id_grupo: Number
@@ -148,7 +150,8 @@
             return{
                 actividades: [],
                 title: null,
-                width: null
+                width: null,
+                id_actividad: null
             }
         },
         methods: {
@@ -174,7 +177,14 @@
 
                 this.title = "Agregar Actividad"
                 this.width = "500"
+                this.id_actividad = null
+                
                 this.$refs.modal.show()
+                .then(() => {
+
+                    this.$refs.form.clear()
+
+                })
 
             },
             close_modal(){
@@ -225,6 +235,55 @@
 
                     this.obtener_actividades()
                 })
+
+            },
+            eliminar_actividad(actividad){
+
+                const config_alert = {
+                    title: '¿Está seguro?',
+                    message: 'La actividad será eliminada junto con las personas asignadas',
+                    type: 'warning',
+                    confirm_text: 'ACEPTAR',
+                    cancel_text: 'CANCELAR',
+                }
+
+                alert.show_confirm(config_alert)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+                        
+                        const data = {
+                            url: 'eliminar_actividad',
+                            data: {
+                                id_actividad: actividad.id
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            console.log(response.data)
+
+                            if (response.data.status == 200) {
+                                
+                                alert.show(response.data)
+                                .then(() => {
+                                    this.obtener_actividades()
+                                })
+
+                            }
+                        })
+
+                    }
+
+                })
+            },
+            mostrar_editar(actividad){
+
+                this.id_actividad = actividad.id
+
+                this.title = "Editar Actividad"
+                this.width = "500"
+                this.$refs.modal.show()
 
             }
 
