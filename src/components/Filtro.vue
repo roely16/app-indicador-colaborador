@@ -20,7 +20,8 @@
             disabled_seccion: Boolean,
             disabled_colaborador: Boolean,
             prop_nit: String,
-            prop_codarea: String
+            prop_codarea: String,
+            id_colaborador: String
         },
         data(){
             return{
@@ -92,9 +93,36 @@
 
                 }
 
+            },
+            id_colaborador: function(val){
+
+                if (val) {
+
+                    this.nit_colaborador = val
+
+                    this.$emit('getNit', this.nit_colaborador)
+
+                }else{
+
+                    this.nit_colaborador = null
+
+                }
+  
             }
         },
         mounted(){
+
+            if (this.id_colaborador) {
+                
+                this.nit_colaborador = this.id_colaborador
+
+                this.$emit('getNit', this.nit_colaborador)
+
+            }else{
+
+                this.nit_colaborador = null
+
+            }
 
             this.set_seccion()
             this.obtener_areas()

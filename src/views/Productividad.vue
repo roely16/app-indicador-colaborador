@@ -91,7 +91,7 @@
 
 		<Modal :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
+				<Form ref="form" :id_evaluacion="id_evaluacion" :id_colaborador="id_colaborador" @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 	</div>
@@ -106,6 +106,8 @@
 	import verificar_permisos from '@/functions/verificar_permisos'
 
 	import Alert from '@/components/AlertSeleccion'
+
+	import sw_alert from '@/functions/alert'
 
 	export default {
 		components: {
@@ -140,15 +142,21 @@
 				headers: [],
 				reportes: [],
 				escritura: false,
-				secciones: false
+				secciones: false,
+				id_evaluacion: null,
+				id_colaborador: null
 			}
 		},
 		methods: {
 
 			mostrar_modal(){
-				this.title = "Agregar Reporte"
+
+				this.title = "Generar Evaluación"
 				this.width = '800'
+				this.id_evaluacion = null
+				this.id_colaborador = null
 				this.$refs.modal.show()
+
 			},
 			close_modal(){
 				this.$refs.modal.close()
@@ -216,10 +224,54 @@
 				})
 
 			},
-			mostrar_editar(){
+			mostrar_editar(item){
+				
+				this.title = "Editar Evaluación"
+				this.width = '800'
+				this.id_evaluacion = item.id
+				this.id_colaborador = item.id_persona
+
+				this.$refs.modal.show()
 
 			},
-			eliminar(){
+			eliminar(item){
+
+				const data_alert = {
+					title: '¿Está seguro?',
+					message: 'Una vez eliminada no se podrá recuperar!',
+					type: 'warning',
+					confirm_text: 'ELIMINAR',
+					cancel_text: 'Cancelar'
+				}
+
+				sw_alert.show_confirm(data_alert)
+				.then((result) => {
+
+					if (result.isConfirmed) {
+						
+						const data = {
+							url: 'eliminar_evaluacion',
+							data: {
+								id: item.id
+							}
+						}
+
+						request.post(data)
+						.then((response) => {
+
+							if (response.data.status == 200) {
+								
+								sw_alert.show(response.data)
+								.then(() => {
+									this.obtener_reportes()
+								})
+
+							}
+						})
+
+					}
+
+				})
 
 			}
 

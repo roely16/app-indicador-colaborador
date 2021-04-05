@@ -104,6 +104,8 @@
 
 	import Alert from '@/components/AlertSeleccion'
 
+	import sw_alert from '@/functions/alert'
+
 	export default {
 		components: {
 			Modal,
@@ -213,7 +215,44 @@
 			mostrar_editar(){
 
 			},
-			eliminar(){
+			eliminar(item){
+
+				const data_alert = {
+					title: '¿Está seguro?',
+					message: 'Una vez eliminada no se podrá recuperar!',
+					type: 'warning',
+					confirm_text: 'ELIMINAR',
+					cancel_text: 'Cancelar'
+				}
+
+				sw_alert.show_confirm(data_alert)
+				.then((result) => {
+
+					if (result.isConfirmed) {
+						
+						const data = {
+							url: 'eliminar_evaluacion',
+							data: {
+								id: item.id
+							}
+						}
+
+						request.post(data)
+						.then((response) => {
+
+							if (response.data.status == 200) {
+								
+								sw_alert.show(response.data)
+								.then(() => {
+									this.obtener_reportes()
+								})
+
+							}
+						})
+
+					}
+
+				})
 
 			}
 

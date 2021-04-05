@@ -1,12 +1,12 @@
 <template>
     <div>
         <v-container>
-            <v-form @submit.prevent="registrar()" v-model="valid" ref="form">
+            <v-form @submit.prevent="!id_evaluacion ? registrar() : editar()" v-model="valid" ref="form">
                 <v-row dense class="pb-0">
                     <v-col>
                          <v-card outlined>
                             <v-card-text>
-                                <Filtro :disabled_seccion="!secciones" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
+                                <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
                             </v-card-text>
                         </v-card>
                     </v-col>
@@ -137,7 +137,9 @@
         },
         props: {
             closed: Boolean,
-            secciones: Boolean
+            secciones: Boolean,
+            id_evaluacion: String,
+            id_colaborador: String
         },
         data(){
             return{
@@ -165,9 +167,13 @@
 
                 request.post(data)
                 .then((response) => {
+
                     this.criterio = response.data.criterio
                     this.items = response.data.items
                     this.detalle_colaborador = response.data.detalle_colaborador
+
+                    this.$refs.form.resetValidation()
+
                 })
 
             },
@@ -220,6 +226,61 @@
 
                 item.calificacion = item.check ? 0 : 100
 
+            },
+            detalle_evaluacion(){
+
+                const data = {
+                    url: 'detalle_reporte',
+                    data: {
+                        id_evaluacion: this.id_evaluacion,
+                        nit: this.id_colaborador
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+
+                    this.criterio = response.data.criterio
+                    this.items = response.data.items
+
+                    this.detalle_colaborador = response.data.detalle_colaborador
+                    
+                })
+
+            },
+            editar(){
+
+                this.$refs.form.validate()
+
+                if (this.valid) {
+
+                    const data = {
+                        url: 'editar_evaluacion',
+                        data: {
+                            items: this.items,
+                            nit: this.id_colaborador,
+                            id_evaluacion: this.id_evaluacion,
+                            criterio: this.criterio
+                        }
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+
+                        if (response.data.status == 200) {
+                            
+                            alert.show(response.data)
+                            .then(() => {
+                                this.$emit('update')
+                                this.$emit('closeModal')
+                            })
+
+                        }
+                        
+                    })
+
+                }
+
             }
         },
         watch: {
@@ -234,16 +295,26 @@
             },
             nit_colaborador: function(val){
 
-                console.log(val);
-
                 if (val) {
                     
-                    this.obtener_datos()
+                    if (this.id_evaluacion) {
 
+                        this.detalle_evaluacion()
+
+                    }else{
+
+                        this.obtener_datos()
+
+                    }
                 }
 
-            }
+            },
+            id_colaborador: function(val){
 
+                this.nit_colaborador = val
+                this.items = []
+
+            }
         },
         computed: {
             total_evaluacion: function(){
