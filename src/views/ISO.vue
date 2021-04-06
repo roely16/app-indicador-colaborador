@@ -88,7 +88,7 @@
 
 		<Modal :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
+				<Form ref="form" :id_evaluacion="id_evaluacion" :id_colaborador="id_colaborador" @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 	</div>
@@ -138,15 +138,21 @@
 				headers: [],
 				reportes: [],
 				escritura: false,
-				secciones: false
+				secciones: false,
+				id_evaluacion: null,
+				id_colaborador: null
 			}
 		},
 		methods: {
 
 			mostrar_modal(){
-				this.title = "Agregar Reporte"
-				this.width = '900'
+				
+				this.title = "Generar Evaluación"
+				this.width = '800'
+				this.id_evaluacion = null
+				this.id_colaborador = null
 				this.$refs.modal.show()
+
 			},
 			close_modal(){
 				this.$refs.modal.close()
@@ -212,7 +218,14 @@
 				})
 
 			},
-			mostrar_editar(){
+			mostrar_editar(item){
+
+				this.title = "Editar Evaluación"
+				this.width = '800'
+				this.id_evaluacion = item.id
+				this.id_colaborador = item.id_persona
+
+				this.$refs.modal.show()
 
 			},
 			eliminar(item){

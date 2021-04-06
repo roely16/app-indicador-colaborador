@@ -55,7 +55,7 @@
 
                         <v-row align="center" v-if="criterio.metodo_calificacion == 'verificacion'" >
                             <v-col cols="8">
-                                <v-btn :dark="item.check" @click="click_item(item)" :color="item.check ? 'red' : ''" block>
+                                <v-btn :dark="item.check" @click="item.editable ? click_item(item) : null" :color="item.check ? 'red' : ''" block>
                                     {{ item.descripcion }}
                                 </v-btn>
                             </v-col>
@@ -63,7 +63,7 @@
                                 <v-text-field type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable" autocomplete="off" dense hide-details outlined></v-text-field>
                             </v-col>
                             <v-col>
-                                <v-btn @click="item.editable = !item.editable" x-small color="blue darken-4" icon>
+                                <v-btn :disabled="!item.editable" @click="item.editable = !item.editable" x-small color="blue darken-4" icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
@@ -73,6 +73,26 @@
                                         mdi-message
                                     </v-icon>
                                 </v-btn>
+
+                                <v-tooltip v-if="item.info_calculo" bottom>
+                                    <template v-slot:activator="{ on, attrs }">
+                                        <v-btn
+                                            class="ml-4"
+                                            x-small
+                                            color="error"
+                                            icon
+                                            v-bind="attrs"
+                                            v-on="on"
+                                        >
+                                            <v-icon>
+                                                mdi-information
+                                            </v-icon>
+                                        </v-btn>
+                                    </template>
+                                    <span>{{ item.info_calculo }}</span>
+                                </v-tooltip>
+
+                                
                             </v-col>
                             <v-col v-if="item.show_description" cols="8">
                                 <v-textarea outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
