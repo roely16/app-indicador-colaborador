@@ -3,10 +3,10 @@
         <v-container>
             <v-row>
                 <v-col>
-                   <IntegrantesGrupo :id_actividad="id_actividad" :id_grupo="id_grupo"></IntegrantesGrupo>
+                   <IntegrantesGrupo @updateActividad="(data) => { data_actividad = data }" :id_actividad="id_actividad" :id_grupo="id_grupo"></IntegrantesGrupo>
                 </v-col>
                 <v-col>
-                    <ActividadesGrupo @actividadCheck="(value) => { id_actividad = value }" :id_grupo="id_grupo"></ActividadesGrupo>
+                    <ActividadesGrupo :data_actividad="data_actividad" @actividadCheck="(value) => { id_actividad = value }" :id_grupo="id_grupo"></ActividadesGrupo>
                 </v-col>
             </v-row>
         </v-container>
@@ -29,7 +29,8 @@
         },
         data(){
             return{
-                id_actividad: null
+                id_actividad: null,
+                data_actividad: null
             }
         },
         created(){

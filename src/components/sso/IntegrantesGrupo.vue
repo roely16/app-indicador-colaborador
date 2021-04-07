@@ -20,11 +20,14 @@
                                 {{ enable_check ? 'mdi-account-multiple-remove' : 'mdi-account-multiple-check' }}
                             </v-icon>
                         </v-btn>
-                        <v-btn @click="asignar_actividad()" :disabled="!checked.length > 0" icon>
+                        <!-- <v-btn @click="asignar_actividad()" :disabled="!checked.length > 0" icon>
                             <v-icon>
                                 mdi-format-list-checks
                             </v-icon>
-                        </v-btn>
+                        </v-btn> -->
+                        <v-scroll-x-transition>
+                            <v-chip color="success" dark @click="asignar_actividad()" v-if="checked.length > 0" label small>ASIGNAR</v-chip>
+                        </v-scroll-x-transition>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -111,7 +114,7 @@
         },
         props: {
             id_grupo: Number,
-            id_actividad: Number
+            id_actividad: String
         },
         data(){
             return{
@@ -177,7 +180,15 @@
 
                         request.post(data)
                         .then((response) => {
+
                             console.log(response.data)
+
+                            this.obtener_integrantes()
+
+                            this.enable_check = false
+
+                            this.$emit('updateActividad', response.data)
+
                         })
 
                     }
@@ -189,8 +200,19 @@
         },
         watch: {
 
-            id_actividad: function(){
+            id_actividad: function(val){
 
+                this.obtener_integrantes()
+
+                if (!val) {
+                    
+                    this.enable_check = false
+
+                }
+
+            },
+            id_grupo: function(){
+                
                 this.obtener_integrantes()
 
             }

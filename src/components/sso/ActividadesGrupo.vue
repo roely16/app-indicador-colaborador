@@ -41,9 +41,27 @@
                                 </span>
                             </v-col>
                             <v-col align="end">
-                                <v-btn @click="actividad.calificar = !actividad.calificar" color="teal darken-4" x-small icon>
+
+                                <!-- Botones para calificar -->
+                                <v-btn @click="calificacion_masiva('S', actividad)" v-if="actividad.calificar" color="green darken-4" x-small icon>
                                     <v-icon>
-                                        mdi-format-list-checks
+                                        mdi-check
+                                    </v-icon>
+                                </v-btn>
+                                <v-btn @click="calificacion_masiva('N', actividad)" v-if="actividad.calificar" color="orange accent-4" class="mr-4" x-small icon>
+                                    <v-icon>
+                                        mdi-close-circle
+                                    </v-icon>
+                                </v-btn>
+
+                                
+
+                                <v-btn v-if="actividad.responsables.length > 0" @click="() => {
+                                    actividad.calificar = !actividad.calificar
+                                    actividad.expand = actividad.calificar    
+                                }" :color="!actividad.calificar ? 'teal darken-4' : 'secondary'" x-small icon>
+                                    <v-icon>
+                                        {{ actividad.calificar ? 'mdi-cancel' : 'mdi-format-list-checks' }}
                                     </v-icon>
                                 </v-btn>
                                 <v-btn @click="mostrar_editar(actividad)" color="blue accent-4" x-small icon>
@@ -61,13 +79,14 @@
                                         {{ !actividad.expand ? 'mdi-chevron-down' : 'mdi-chevron-up' }}
                                     </v-icon>
                                 </v-btn>
+
                             </v-col>
                         </v-row>
                     </v-card-text>
 
                     <!-- Responsables -->
                     <v-card-text v-if="actividad.expand">
-                        <v-row>
+                        <v-row v-if="actividad.responsables.length > 0">
                             <v-col cols="12">
                                 <v-card outlined v-for="(responsable, key) in actividad.responsables" :key="key" class="mb-2">
                                     <v-card-text class="pt-2 pb-2">
@@ -90,7 +109,7 @@
                                                 </span>
                                             </v-col>
                                             <v-col align="end">
-                                                <v-btn @click="calificar_responsable('S', responsable.nit, actividad.id)" v-if="actividad.calificar" color="green darken-4" x-small icon>
+                                                <v-btn @click="calificar_responsable('S', responsable.nit, actividad.id, responsable)" v-if="actividad.calificar" color="green darken-4" x-small icon>
                                                     <v-icon>
                                                         mdi-check
                                                     </v-icon>
@@ -109,6 +128,12 @@
                                         </v-row>
                                     </v-card-text>
                                 </v-card>
+                            </v-col>
+                        </v-row>
+
+                        <v-row v-if="actividad.responsables.length <= 0">
+                            <v-col>
+                                <MsgAlert msg="La actividad no tiene asignados participantes"></MsgAlert>
                             </v-col>
                         </v-row>
                     </v-card-text>
@@ -139,7 +164,11 @@
 
     export default {
         props: {
-            id_grupo: Number
+            id_grupo: Number,
+            data_actividad: {
+                type: Object,
+                default: null
+            }
         },
         components: {
             MsgAlert,
@@ -151,7 +180,8 @@
                 actividades: [],
                 title: null,
                 width: null,
-                id_actividad: null
+                id_actividad: null,
+                bk_responsable: null
             }
         },
         methods: {
@@ -218,7 +248,7 @@
                 }
 
             },
-            calificar_responsable(result, nit, id_actividad){
+            calificar_responsable(result, nit, id_actividad, responsable){
 
                 const data = {
                     url: 'calificar_responsable',
@@ -231,9 +261,18 @@
 
                 request.post(data)
                 .then((response) => {
-                    console.log(response.data)
+                    
+                    let result = this.actividades.filter( actividad => actividad.id == id_actividad )
 
-                    this.obtener_actividades()
+                    if (result.length > 0) {
+                                                
+                        // Buscar al responsable
+                        let res = result[0].responsables.filter(responsable => responsable.nit == response.data.responsable.nit)
+
+                        res[0].cumplio = response.data.responsable.cumplio
+
+                    }
+
                 })
 
             },
@@ -284,6 +323,43 @@
                 this.title = "Editar Actividad"
                 this.width = "500"
                 this.$refs.modal.show()
+
+            },
+            calificacion_masiva(result, actividad){
+
+                actividad.responsables.forEach(responsable => {
+                    
+                    this.calificar_responsable(result, responsable.nit, actividad.id)
+
+                });
+
+            }
+
+        },
+        watch: {
+
+            id_grupo: function(){
+                
+                this.obtener_actividades()
+
+            },
+            data_actividad: function(val){
+
+                if (val) {
+                    
+                    let act = this.actividades.filter(actividad => actividad.id = val.id_actividad)
+
+                    if (act.length > 0) {
+                        
+                        val[0].personas.forEach(responsable => {
+                            
+                            val[0].responsable.push(responsable)
+
+                        });
+
+                    }
+
+                }
 
             }
 
