@@ -109,6 +109,9 @@
 
     import Alert from '@/components/AlertSeleccion'
 
+	import request from '@/functions/request'
+	import sw_alert from '@/functions/alert'
+
     export default {
         components: {
             Alert,
@@ -177,14 +180,88 @@
 			},
             obtener_reportes(){
 
+				const url = this.$route.name
+
+				const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
+				const data = {
+					url: 'obtener_evaluaciones_competencia',
+					data: {
+						url: url,
+						nit: usuario.nit,
+						codarea: usuario.codarea
+					}
+				}
+
+				request.post(data)
+				.then((response) => {
+
+					this.headers = response.data.headers
+					this.reportes = response.data.items
+
+				})
+
+            },
+			mostrar_editar(item){
+
+				this.title = "Editar Evaluación"
+				this.width = '800'
+				this.id_evaluacion = item.id
+				this.id_colaborador = item.id_persona
+
+				this.$refs.modal.show()
+
+			},
+			eliminar(item){
+
+				const data_alert = {
+					title: '¿Está seguro?',
+					message: 'Una vez eliminada no se podrá recuperar!',
+					type: 'warning',
+					confirm_text: 'ELIMINAR',
+					cancel_text: 'Cancelar'
+				}
+
+				sw_alert.show_confirm(data_alert)
+				.then((result) => {
+
+					if (result.isConfirmed) {
+						
+						const data = {
+							url: 'eliminar_evaluacion_competencia',
+							data: {
+								id: item.id
+							}
+						}
+
+						request.post(data)
+						.then((response) => {
+
+							console.log(response.data)
+
+							if (response.data.status == 200) {
+								
+								sw_alert.show(response.data)
+								.then(() => {
+									this.obtener_reportes()
+								})
+
+							}
+						})
+
+					}
+
+				})
 
 
-            }
+			}
 
         },
         created(){
 
             this.verificar_permisos()
+
+			this.obtener_reportes()
 
         }
     }

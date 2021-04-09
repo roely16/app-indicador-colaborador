@@ -16,13 +16,61 @@
                     
                     <!-- Mostrar detalle de Sección, si es asesor o si es ISO -->
 
-                    <v-col cols="12">
+                    <v-col cols="9">
                         <v-chip dark :color="detalle_colaborador.iso == '1' ? 'blue' : 'deep-orange darken-1'" label>
                             {{ detalle_colaborador.iso == '1' ? 'ISO' : 'NO ISO' }}
                         </v-chip>
                         <v-chip dark :color="detalle_colaborador.asesor == '1' ? 'cyan darken-4' : 'blue-grey darken-2'" label class="ml-2">
                             {{ detalle_colaborador.asesor == '1' ? 'ASESOR' : 'COLABORADOR' }}
                         </v-chip>
+                    </v-col>
+
+                    <v-col cols="3" align="end">
+                        <v-chip label color="success">
+                            {{ date }}
+                        </v-chip>
+                        <v-menu
+                            ref="menu"
+                            v-model="menu"
+                            :close-on-content-click="false"
+                            :return-value.sync="date"
+                            transition="scale-transition"
+                            offset-y
+                            max-width="290px"
+                            min-width="auto"
+                        >
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn icon v-bind="attrs" v-on="on">
+                                    <v-icon>
+                                        mdi-calendar
+                                    </v-icon>
+                                </v-btn>
+                           
+                            </template>
+                            <v-date-picker
+                                v-model="date"
+                                type="month"
+                                no-title
+                                scrollable
+                            >
+                            <v-spacer></v-spacer>
+                            <v-btn
+                                text
+                                color="primary"
+                                @click="menu = false"
+                            >
+                                Cancel
+                            </v-btn>
+                            <v-btn
+                                text
+                                color="primary"
+                                @click="$refs.menu.save(date)"
+                            >
+                                OK
+                            </v-btn>
+                            </v-date-picker>
+                        </v-menu>
+
                     </v-col>
 
                     <v-col class="pb-0" v-for="(item, key) in items" :key="key" cols="12">
@@ -171,7 +219,10 @@
                 check_all: false,
                 nit_colaborador: null,
                 valid: true,
-                detalle_colaborador: {}
+                detalle_colaborador: {},
+                date: new Date().toISOString().substr(0, 7),
+                menu: false,
+                modal: false,
             }
         },
         methods: {
@@ -181,7 +232,8 @@
                     url: 'datos_reporte',
                     data: {
                         url: this.$route.name,
-                        nit: this.nit_colaborador
+                        nit: this.nit_colaborador,
+                        month: this.date
                     }
                 }
 
@@ -211,7 +263,8 @@
                             url: url,
                             items: this.items,
                             id_persona: this.nit_colaborador,
-                            criterio: this.criterio
+                            criterio: this.criterio,
+                            month: this.date
                         }
                     }
 
@@ -264,6 +317,8 @@
                     this.items = response.data.items
 
                     this.detalle_colaborador = response.data.detalle_colaborador
+
+                    this.date = response.data.evaluacion.mes
                     
                 })
 
@@ -280,7 +335,8 @@
                             items: this.items,
                             nit: this.id_colaborador,
                             id_evaluacion: this.id_evaluacion,
-                            criterio: this.criterio
+                            criterio: this.criterio,
+                            month: this.date
                         }
                     }
 
@@ -333,6 +389,15 @@
 
                 this.nit_colaborador = val
                 this.items = []
+
+            },
+            date: function(val){
+
+                if (val) {
+                    
+                    this.obtener_datos()
+
+                }
 
             }
         },
