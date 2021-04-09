@@ -119,7 +119,7 @@
                                                         mdi-close-circle
                                                     </v-icon>
                                                 </v-btn>
-                                                <v-btn color="red accent-4" x-small icon>
+                                                <v-btn @click="eliminar_responsable_actividad(responsable.nit, actividad.id)" color="red accent-4" x-small icon>
                                                     <v-icon>
                                                         mdi-delete
                                                     </v-icon>
@@ -333,6 +333,59 @@
 
                 });
 
+            },
+            eliminar_responsable_actividad(nit, id_actividad){
+
+                const config_alert = {
+                    title: '¿Está seguro?',
+                    message: 'La persona será eliminada de la actividad',
+                    type: 'warning',
+                    confirm_text: 'ACEPTAR',
+                    cancel_text: 'CANCELAR',
+                }
+
+                alert.show_confirm(config_alert)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+                        
+                        const data = {
+                            url: 'eliminar_responsable_actividad',
+                            data: {
+                                id_actividad: id_actividad,
+                                nit: nit
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+
+                            if (response.data.status == 200) {
+                                
+                                // Eliminar al responsable de la actividad
+                                let act = this.actividades.filter(actividad => actividad.id == response.data.data.id_actividad)
+
+                                console.log(act)
+
+                                if (act.length > 0) {
+                                    
+                                    // Borrar al responsable de la actividad
+                                    let filter = act[0].responsables.filter( responsable => responsable.nit != response.data.data.responsable );
+
+                                    act[0].responsables = filter
+
+                                    console.log(filter);
+
+                                }
+
+                            }
+
+                        })
+
+                    }
+
+                })
+
             }
 
         },
@@ -345,15 +398,19 @@
             },
             data_actividad: function(val){
 
+                console.log(val)
+
                 if (val) {
                     
-                    let act = this.actividades.filter(actividad => actividad.id = val.id_actividad)
+                    let act = this.actividades.filter(actividad => actividad.id == val.id_actividad)
 
                     if (act.length > 0) {
                         
-                        val[0].personas.forEach(responsable => {
+                        console.log(act);
+
+                        val.personas.forEach(responsable => {
                             
-                            val[0].responsable.push(responsable)
+                            act[0].responsables.push(responsable[0])
 
                         });
 

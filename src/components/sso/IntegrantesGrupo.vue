@@ -15,6 +15,11 @@
                             v-if="loading"
                             class="mr-2"
                         ></v-progress-circular>
+                        <v-btn @click="obtener_integrantes()" icon>
+                            <v-icon>
+                                mdi-reload
+                            </v-icon>
+                        </v-btn>
                         <v-btn :disabled="!id_actividad" @click="enable_check = !enable_check" icon>
                             <v-icon>
                                 {{ enable_check ? 'mdi-account-multiple-remove' : 'mdi-account-multiple-check' }}
@@ -26,7 +31,7 @@
                             </v-icon>
                         </v-btn> -->
                         <v-scroll-x-transition>
-                            <v-chip color="success" dark @click="asignar_actividad()" v-if="checked.length > 0" label small>ASIGNAR</v-chip>
+                            <v-chip class="ml-2" color="success" dark @click="asignar_actividad()" v-if="checked.length > 0" label small>ASIGNAR</v-chip>
                         </v-scroll-x-transition>
                     </v-col>
                 </v-row>
