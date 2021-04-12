@@ -108,15 +108,15 @@
                                 </v-btn>
                             </v-col>
                             <v-col cols="2">
-                                <v-text-field type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable" autocomplete="off" dense hide-details outlined></v-text-field>
+                                <v-text-field type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable || item.edit" autocomplete="off" dense hide-details outlined></v-text-field>
                             </v-col>
                             <v-col>
-                                <v-btn :disabled="!item.editable" @click="item.editable = !item.editable" x-small color="blue darken-4" icon>
+                                <v-btn :disabled="!item.editable" @click="item.edit = !item.edit" x-small color="blue darken-4" icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
                                 </v-btn>
-                                <v-btn @click="item.show_description = !item.show_description" class="ml-4" x-small color="info" icon>
+                                <v-btn @click="item.show_description = !item.show_description" class="ml-4" x-small :color="item.comentario ? 'info' : 'secondary'" icon>
                                     <v-icon>
                                         mdi-message
                                     </v-icon>
@@ -143,7 +143,7 @@
                                 
                             </v-col>
                             <v-col v-if="item.show_description" cols="8">
-                                <v-textarea outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
+                                <v-textarea label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
                             </v-col>
                         </v-row>
                     </v-col>
@@ -411,8 +411,12 @@
                 let total = 0
 
                 this.items.forEach(item => {
-                    
-                    console.log(item)
+                
+                    if (!item.calificacion) {
+                        
+                        item.calificacion = 0
+
+                    }
 
                     total += (parseInt(item.calificacion) * item.valor)
 
