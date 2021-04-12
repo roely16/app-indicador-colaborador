@@ -4,8 +4,8 @@
         <v-row :class="margin_top" align="center" justify="center">
             <v-col cols="12">
                 <v-row justify="center">
-                    <v-col cols="2">
-                        <v-img src="@/assets/img/info.png"></v-img>
+                    <v-col align="center" cols="12">
+                        <v-img max-width="100" src="@/assets/img/info.png"></v-img>
                     </v-col>
                 </v-row>
             </v-col>

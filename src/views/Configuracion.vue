@@ -23,7 +23,7 @@
                     grow
                     v-model="tab"
                 >
-                    <v-tab>Configuración General</v-tab>
+                    <v-tab>Perfiles</v-tab>
                     <v-tab>Permisos</v-tab>
                     <v-tab>Mantenimiento</v-tab>
                 </v-tabs>
@@ -32,7 +32,7 @@
                     v-model="tab"
                 >
                     <v-tab-item>
-                        <General></General>
+                        <Perfiles></Perfiles>
                     </v-tab-item>
                     <v-tab-item>
                         <Permisos></Permisos>
@@ -49,19 +49,19 @@
 
 <script>
 
-    import General from '@/components/configuracion/General.vue'
+    import Perfiles from '@/components/configuracion/Perfiles.vue'
     import Mantenimiento from '@/components/configuracion/Mantenimiento.vue'
     import Permisos from '@/components/configuracion/Permisos.vue'
 
     export default {
         components: {
-            General,
+            Perfiles,
             Mantenimiento,
             Permisos
         },
         data(){
             return{
-                tab: 1,
+                tab: 0,
                 breadcrumbs: [
 					{
 						text: 'Home',

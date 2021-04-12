@@ -1,0 +1,295 @@
+<template>
+    <div>
+        <v-container>
+            <v-row>
+                <v-col cols="7">
+                    <v-card min-height="700" outlined>
+                        <v-card-text>
+                            <span class="overline">Información General</span>
+                            <v-row class="mt-1">
+                                <v-col cols="12">
+                                    <v-text-field v-model="perfil.nombre" autocomplete="off" hide-details outlined single-line label="Nombre"></v-text-field>
+                                </v-col>
+                                <v-col cols="12">
+                                    <v-textarea v-model="perfil.descripcion" auto-grow autocomplete="off" hide-details outlined single-line label="Descripción" rows="3"></v-textarea>
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
+
+                        <v-card-text>
+                            <v-row>
+                                <v-col cols="8">
+                                    <span class="overline">Competencias</span>
+                                </v-col>
+                                <v-col align="end">
+                                    <v-btn @click="perfil.mostrar_nuevo = !perfil.mostrar_nuevo" icon color="success">
+                                        <v-icon>
+                                            {{ perfil.mostrar_nuevo ? 'mdi-eye-off' : 'mdi-eye' }}
+                                        </v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+
+                            <!-- Agregar nueva competencia -->
+                            <v-row v-if="perfil.mostrar_nuevo">
+                                <v-col cols="12">
+                                    <v-card outlined>
+                                        <v-card-text>
+                                            <v-row>
+                                                <v-col cols="8">
+                                                    <v-textarea v-model="perfil.nueva_competencia.nombre" autocomplete="off" hide-details outlined single-line label="Nombre" rows="2" auto-grow></v-textarea>
+                                                </v-col>
+                                                <v-col cols="4">
+                                                    <v-select return-object v-model="perfil.nueva_competencia.tipo" :items="tipos_competencias" autocomplete="off" hide-details outlined single-line label="Tipo"></v-select>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col align="center" cols="12">
+                                                    <v-btn @click="perfil.mostrar_nuevo = false">
+                                                        <v-icon>
+                                                            mdi-close-circle
+                                                        </v-icon>
+                                                    </v-btn>
+                                                    <v-btn :disabled="!perfil.nueva_competencia.nombre || !perfil.nueva_competencia.tipo" @click="agregar_competencia()" class="ml-2" color="success">
+                                                        <v-icon>
+                                                            mdi-plus-circle
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card-text>
+                                    </v-card>
+                                </v-col>
+
+                                <v-col cols="12">
+                                    <v-divider></v-divider>
+                                </v-col>
+                                
+                            </v-row>
+
+                            <v-row class="mt-1">
+                                <v-col cols="12" v-if="perfil.tipos_competencias.length > 0">
+                                    <v-expansion-panels>
+                                        <v-expansion-panel
+                                            v-for="(item,i) in perfil.tipos_competencias"
+                                            :key="i"
+                                        >
+                                        <v-expansion-panel-header>
+                                            <span class="overline">
+                                                {{ item.nombre }}
+                                            </span>
+                                        </v-expansion-panel-header>
+                                        <v-expansion-panel-content>
+                                            <v-row v-for="(competencia, key) in item.competencias" :key="key">
+                                                <v-col cols="9">
+                                                    {{ competencia.nombre }}
+                                                </v-col>
+                                                <v-col align="end">
+                                                    <v-btn x-small icon color="error">
+                                                        <v-icon>
+                                                            mdi-delete
+                                                        </v-icon>
+                                                    </v-btn>
+                                                </v-col>
+                                            </v-row>
+                                        </v-expansion-panel-content>
+                                        </v-expansion-panel>
+                                    </v-expansion-panels>
+                                </v-col>
+
+                                <v-col v-if="perfil.tipos_competencias <= 0">
+                                    <Alert msg="No se han registrado competencias"></Alert>
+                                </v-col>
+                            </v-row>
+                        </v-card-text>
+
+                    </v-card>
+                </v-col>
+                <v-col cols="5">
+                    <v-card min-height="700" outlined>
+
+                        <v-card-text>
+                            <span class="overline">Colaboradores</span>
+                            
+                            <Filtro ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }" cols_areas="12" cols_colaboradores="12"></Filtro>
+
+                            <v-row align="center" class="mt-2">
+                                <v-col align="center" cols="12">
+                                    <v-btn :disabled="!nit_colaborador" @click="agregar_colaborador()" class="ml-2" color="success">
+                                        <v-icon>
+                                            mdi-plus-circle
+                                        </v-icon>
+                                    </v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-divider class="mt-4"></v-divider>
+                        </v-card-text>
+
+                        <!-- Colaboradores asignados al perfil -->
+                        <v-card-text v-if="perfil.colaboradores.length <= 0">
+
+                            <v-row>
+                                <v-col cols="12">
+                                    <Alert msg="El perfil no tiene colaboradores asignados"></Alert>
+                                </v-col>
+                                
+                            </v-row>
+
+                        </v-card-text>
+
+                        <!-- Listado de colaboradores -->
+                        <v-card-text>
+                            <v-row>
+                                <v-col></v-col>
+                            </v-row>
+                        </v-card-text>
+
+                    </v-card>
+                </v-col>
+            </v-row>
+
+            <v-row>
+                <v-col align="center">
+                    <v-btn @click="$emit('closeModal')" large dark>
+                        CANCELAR
+                    </v-btn>
+                    <v-btn @click="registrar()" :disabled="!perfil.nombre" large color="primary" class="ml-2">
+                        REGISTRAR
+                    </v-btn>
+                </v-col>
+            </v-row>
+        </v-container>
+    </div>
+</template>
+
+<script>
+
+    import Alert from '@/components/AlertSeleccion'
+    import Filtro from '@/components/Filtro'
+
+    import request from '@/functions/request'
+
+    export default {
+        components: {
+            Alert,
+            Filtro
+        },
+        data(){
+            return{
+                perfil: {
+                    nombre: null,
+                    descripcion: null,
+                    nueva_competencia: {
+                        nombre: null,
+                        tipo: null
+                    },
+                    tipos_competencias: [],
+                    colaboradores: [],
+                    mostrar_nuevo: false
+                },
+                tipos_competencias: [
+                    {
+                        id: 1,
+                        text: "Técnicas"
+                    },
+                    {
+                        id: 2,
+                        text: "Blandas"
+                    }
+                ],
+                codarea: null,
+                nit_colaborador: null
+            }
+        },
+        methods: {
+
+            agregar_competencia(){
+
+                if (this.perfil.nueva_competencia.nombre && this.perfil.nueva_competencia.tipo) {
+
+                    let result = this.perfil.tipos_competencias.filter(tipo => tipo.id == this.perfil.nueva_competencia.tipo.id)
+
+                    // Crear el tipo de competencia
+                    if (result.length <= 0) {
+                        
+                        let data = {
+                            nombre: "Competencias " + this.perfil.nueva_competencia.tipo.text,
+                            id: this.perfil.nueva_competencia.tipo.id,
+                            competencias: []
+                        }
+
+                        this.perfil.tipos_competencias.push(data)
+
+                        let result = this.perfil.tipos_competencias.filter(tipo => tipo.id == this.perfil.nueva_competencia.tipo.id)
+
+                        // eslint-disable-next-line no-unused-vars
+                        let competencia = {
+                            nombre: this.perfil.nueva_competencia.nombre,
+                            id_tipo: result[0].id
+                        }
+
+                        result[0].competencias.push(competencia)
+
+                    }else{
+
+                        // Registrar solo la competencia
+                        let result = this.perfil.tipos_competencias.filter(tipo => tipo.id == this.perfil.nueva_competencia.tipo.id)
+
+                        let competencia = {
+                            nombre: this.perfil.nueva_competencia.nombre,
+                            id_tipo: result[0].id
+                        }
+
+                        result[0].competencias.push(competencia)
+
+                    }
+
+                    this.perfil.nueva_competencia = {
+                        nombre: null,
+                        tipo: null
+                    }
+
+                }
+
+            },
+            agregar_colaborador(){
+
+                const data = {
+                    url: 'info_colaborador',
+                    data: {
+                        nit: this.nit_colaborador
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+
+                    this.perfil.colaboradores.push(response.data)
+                })
+
+            },
+            registrar(){
+
+                const data = {
+                    url: 'registrar_perfil',
+                    data: this.perfil
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+                })
+
+            },
+            eliminar_competencia(){
+
+            }
+
+        }
+    }
+</script>
+
+<style>
+
+</style>
