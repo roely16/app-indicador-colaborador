@@ -3,7 +3,7 @@
 
         <v-container>
 
-            <v-form @submit.prevent="registrar()" v-model="valid" ref="form">
+            <v-form @submit.prevent="!id_evaluacion ? registrar() : editar()" v-model="valid" ref="form">
                 <v-row class="mt-2" >
                     <v-col cols="8">
                         <v-card outlined min-height="600">
@@ -15,7 +15,52 @@
                                         <v-text-field readonly v-model="perfil" autocomplete="off" hide-details outlined single-line label="Perfil de Servicios"></v-text-field>
                                     </v-col>
                                     <v-col>
-                                        <v-text-field autocomplete="off" hide-details outlined single-line label="Período de Evaluación"></v-text-field>
+                                        <!-- <v-text-field autocomplete="off" hide-details outlined single-line label="Período de Evaluación"></v-text-field> -->
+
+                                        <v-menu
+                                            ref="menu"
+                                            v-model="menu"
+                                            :close-on-content-click="false"
+                                            :return-value.sync="date"
+                                            transition="scale-transition"
+                                            offset-y
+                                            max-width="290px"
+                                            min-width="auto"
+                                        >
+                                            <template v-slot:activator="{ on, attrs }">
+                                                <v-text-field
+                                                    v-model="date"
+                                                    label="Período de Evaluación"
+                                                    outlined
+                                                    single-line
+                                                    readonly
+                                                    v-bind="attrs"
+                                                    v-on="on"
+                                                ></v-text-field>
+                                                </template>
+                                            <v-date-picker
+                                                v-model="date"
+                                                type="month"
+                                                no-title
+                                                scrollable
+                                            >
+                                                <v-spacer></v-spacer>
+                                                <v-btn
+                                                    text
+                                                    color="primary"
+                                                    @click="menu = false"
+                                                >
+                                                    Cancel
+                                                </v-btn>
+                                                <v-btn
+                                                    text
+                                                    color="primary"
+                                                    @click="$refs.menu.save(date)"
+                                                >
+                                                    OK
+                                                </v-btn>
+                                            </v-date-picker>
+                                        </v-menu>
                                     </v-col>
                                 </v-row>
                                 
@@ -206,6 +251,12 @@
             Filtro,
             AlertSeleccion
         },
+        props: {
+
+            id_evaluacion: String,
+            nit: String
+
+        },
         data(){
             return{
                 ponderacion: [
@@ -243,7 +294,10 @@
                 tipos_competencias: [],
                 valid: false,
                 total: 0,
-                observaciones: null
+                observaciones: null,
+                date: new Date().toISOString().substr(0, 7),
+                menu: false,
+                modal: false,
             }
         },
         methods: {
@@ -284,7 +338,8 @@
                             tipos_competencias: this.tipos_competencias,
                             total: this.total,
                             nit_colaborador: this.nit_colaborador,
-                            observaciones: this.observaciones
+                            observaciones: this.observaciones,
+                            month: this.date
                         }
                     }
 
@@ -309,6 +364,84 @@
 
                 }
 
+            },
+            obtener_detalle(){
+
+                this.id_colaborador = this.nit
+
+                const data = {
+                    url: 'detalle_evaluacion_competencia',
+                    data: {
+                        id: this.id_evaluacion,
+                        nit_colaborador: this.id_colaborador
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+
+                    this.total = response.data.calificacion
+                    this.observaciones = response.data.observaciones
+                    this.date = response.data.periodo
+                    this.perfil = response.data.perfil
+                    this.tipos_competencias = response.data.tipos_competencias
+
+                })
+
+
+            },
+            editar(){
+
+                this.$refs.form.validate()
+
+                if (this.valid) {
+
+                    console.log('editar');
+
+                    const data = {
+                        url: 'editar_evaluacion_competencia',
+                        data: {
+                            tipos_competencias: this.tipos_competencias,
+                            total: this.total,
+                            nit_colaborador: this.nit_colaborador,
+                            observaciones: this.observaciones,
+                            month: this.date,
+                            id_evaluacion: this.id_evaluacion
+                        }
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+
+                        console.log(response.data)
+
+                        if (response.data.status == 200) {
+                            
+                            alert.show(response.data)
+                            .then(() => {
+
+                                this.$emit('update')
+                                this.$emit('closeModal')
+
+                            })
+
+                        }
+
+                    })
+
+                }
+
+            },
+            clear(){
+
+                this.id_colaborador = null
+                this.tipos_competencias = []
+                this.observaciones = null
+                this.total = 0
+                this.perfil = null
+
+                this.$refs.form.resetValidation()
+
             }
 
         },
@@ -318,11 +451,24 @@
 
                 if (val) {
                     
-                    this.obtener_perfil()
+                    if (!this.id_evaluacion) {
+                        
+                        this.obtener_perfil()
 
+                    }
+                
                 }
 
             },
+            id_evaluacion: function(val){
+
+                if (val) {
+                    
+                    this.obtener_detalle()
+
+                }
+
+            }
 
         },
         computed: {
@@ -361,6 +507,15 @@
 
             },
             
+
+        },
+        created(){
+
+            if (this.id_evaluacion) {
+                
+                this.obtener_detalle()
+
+            }
 
         }
     }

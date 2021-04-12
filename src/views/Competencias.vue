@@ -93,7 +93,7 @@
 
         <Modal :fullscreen="fullscreen" :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form ref="form" :id_evaluacion="id_evaluacion" :id_colaborador="id_colaborador" @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
+				<Form ref="form" :id_evaluacion="id_evaluacion" :nit="id_colaborador" @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 
@@ -172,7 +172,13 @@
                 this.fullscreen = true
                 this.id_evaluacion = null
 				this.id_colaborador = null
+
 				this.$refs.modal.show()
+				.then(() => {
+
+					this.$refs.form.clear()
+
+				})
 
             },
             close_modal(){
@@ -205,7 +211,7 @@
 			mostrar_editar(item){
 
 				this.title = "Editar Evaluación"
-				this.width = '800'
+				this.fullscreen = true
 				this.id_evaluacion = item.id
 				this.id_colaborador = item.id_persona
 
