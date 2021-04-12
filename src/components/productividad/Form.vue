@@ -395,8 +395,12 @@
 
                 if (val) {
                     
-                    this.obtener_datos()
+                    if (!this.id_evaluacion) {
+                        
+                        this.obtener_datos()
 
+                    }
+                    
                 }
 
             }
