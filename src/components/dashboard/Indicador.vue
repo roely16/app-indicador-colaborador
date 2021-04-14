@@ -75,13 +75,15 @@
                         ></v-rating>
                     </v-col>
                 </v-row>
-                <!-- <v-row dense>
+                <v-row dense>
                     <v-col cols="12">
-                        <h4>
-                            PUNTAJE ANUAL: {{ colaborador.total_anual }} PUNTOS
-                        </h4>
+                        <h5>
+                            <strong>
+                                PUNTAJE ANUAL: {{ colaborador.total_mensual.toFixed(2) }} PUNTOS
+                            </strong>
+                        </h5>
                     </v-col>
-                </v-row> -->
+                </v-row>
             </v-card-text>
         </v-card>
     </div>

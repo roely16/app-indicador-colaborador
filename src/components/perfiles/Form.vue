@@ -79,20 +79,41 @@
                                                 {{ item.nombre }}
                                             </span>
                                         </v-expansion-panel-header>
-                                        <v-expansion-panel-content>
-                                            <v-row v-for="(competencia, key) in item.competencias" :key="key">
+                                        <v-expansion-panel-content v-if="item.competencias.length > 0">
+
+                                            <v-row align="center" v-for="(competencia, key) in item.competencias" :key="key">
                                                 <v-col cols="9">
-                                                    {{ competencia.nombre }}
+                                                    <v-text-field v-if="competencia.edit" v-model="competencia.nombre" autocomplete="off" hide-details outlined single-line dense></v-text-field>
+
+                                                    <span v-if="!competencia.edit">
+                                                        {{ competencia.nombre }}
+                                                        <v-chip color="error" x-small label v-if="competencia.delete">
+                                                            ELIMINAR
+                                                        </v-chip>
+                                                    </span>
                                                 </v-col>
                                                 <v-col align="end">
-                                                    <v-btn x-small icon color="error">
+                                                    <v-btn @click="competencia.edit = !competencia.edit" x-small icon color="primary">
+                                                        <v-icon>
+                                                            {{ competencia.edit ? 'mdi-pencil-off' : 'mdi-pencil' }}
+                                                        </v-icon>
+                                                    </v-btn>
+                                                    <v-btn @click="eliminar_competencia(item, key, competencia)" x-small icon color="error">
                                                         <v-icon>
                                                             mdi-delete
                                                         </v-icon>
                                                     </v-btn>
                                                 </v-col>
                                             </v-row>
+
                                         </v-expansion-panel-content>
+
+                                        <v-expansion-panel-content v-if="item.competencias.length <= 0">
+
+                                            <Alert msg="No se han registrado competencias"></Alert>
+
+                                        </v-expansion-panel-content>
+
                                         </v-expansion-panel>
                                     </v-expansion-panels>
                                 </v-col>
@@ -139,11 +160,36 @@
 
                         <!-- Listado de colaboradores -->
                         <v-card-text>
-                            <v-row>
-                                <v-col></v-col>
+                            <v-row align="center" v-for="(colaborador, key) in perfil.colaboradores" :key="key">
+                                <v-col cols="1" class="mr-4">
+                                    <v-badge
+                                            color="green accent-4"
+                                            icon="mdi-check"
+                                            avatar
+                                            bordered
+                                            overlap
+                                            :value="false"
+                                        >
+                                            <v-avatar size="40">
+                                                <v-img src="@/assets/img/avatar.png"></v-img>
+                                            </v-avatar>
+                                        </v-badge>
+                                </v-col>
+                                <v-col cols="8">
+                                    {{ colaborador.nombre }} {{ colaborador.apellido }}
+                                    <v-chip color="error" x-small label v-if="colaborador.delete">
+                                        ELIMINAR
+                                    </v-chip>
+                                </v-col>
+                                <v-col align="end">
+                                    <v-btn @click="eliminar_colaborador(key, colaborador)" x-small icon color="error">
+                                        <v-icon>
+                                            mdi-delete
+                                        </v-icon>
+                                    </v-btn>
+                                </v-col>
                             </v-row>
                         </v-card-text>
-
                     </v-card>
                 </v-col>
             </v-row>
@@ -153,7 +199,7 @@
                     <v-btn @click="$emit('closeModal')" large dark>
                         CANCELAR
                     </v-btn>
-                    <v-btn @click="registrar()" :disabled="!perfil.nombre" large color="primary" class="ml-2">
+                    <v-btn @click="!id_perfil ? registrar() : editar()" :disabled="!perfil.nombre" large color="primary" class="ml-2">
                         REGISTRAR
                     </v-btn>
                 </v-col>
@@ -168,8 +214,13 @@
     import Filtro from '@/components/Filtro'
 
     import request from '@/functions/request'
+    // eslint-disable-next-line no-unused-vars
+    import sw_alert from '@/functions/alert'
 
     export default {
+        props: {
+            id_perfil: String
+        },
         components: {
             Alert,
             Filtro
@@ -225,7 +276,8 @@
                         // eslint-disable-next-line no-unused-vars
                         let competencia = {
                             nombre: this.perfil.nueva_competencia.nombre,
-                            id_tipo: result[0].id
+                            id_tipo: result[0].id,
+                            edit: false
                         }
 
                         result[0].competencias.push(competencia)
@@ -237,7 +289,8 @@
 
                         let competencia = {
                             nombre: this.perfil.nueva_competencia.nombre,
-                            id_tipo: result[0].id
+                            id_tipo: result[0].id,
+                            edit: false
                         }
 
                         result[0].competencias.push(competencia)
@@ -254,19 +307,35 @@
             },
             agregar_colaborador(){
 
-                const data = {
-                    url: 'info_colaborador',
-                    data: {
-                        nit: this.nit_colaborador
+                console.log(this.nit_colaborador);
+
+                // Validar que no exista el colaborador
+                let result = this.perfil.colaboradores.filter(colaborador => colaborador.nit == this.nit_colaborador)
+
+                if (result.length <= 0) {
+                    
+                    const data = {
+                        url: 'info_colaborador',
+                        data: {
+                            nit: this.nit_colaborador
+                        }
                     }
+
+                    request.post(data)
+                    .then((response) => {
+                        console.log(response.data)
+
+                        this.perfil.colaboradores.push(response.data)
+                    })
+
+                }else{
+
+                    console.log('ya existe');
+
                 }
 
-                request.post(data)
-                .then((response) => {
-                    console.log(response.data)
 
-                    this.perfil.colaboradores.push(response.data)
-                })
+                
 
             },
             registrar(){
@@ -278,11 +347,123 @@
 
                 request.post(data)
                 .then((response) => {
-                    console.log(response.data)
+
+                    if (response.data.status == 200) {
+                        
+                        sw_alert.show(response.data)
+                        .then(() => {
+
+                            this.$emit('update')
+                            this.$emit('closeModal')
+
+                        })
+
+                    }
                 })
 
             },
-            eliminar_competencia(){
+            eliminar_competencia(tipo, key, competencia){
+
+                if (!this.id_perfil || !competencia.id) {
+                    
+                    tipo.competencias.splice(key, 1)
+
+                }else{
+                    
+                    competencia.delete = !competencia.delete
+
+                }
+            
+            },
+            eliminar_colaborador(key, colaborador){
+
+                if (!this.id_perfil || !colaborador.id_perfil) {
+                    
+                    this.perfil.colaboradores.splice(key, 1)
+
+                }else{
+
+                    colaborador.delete = !colaborador.delete
+
+                }
+                
+
+            },
+            obtener_detalle(){
+
+                const data = {
+                    url: 'detalle_perfil',
+                    data: {
+                        id: this.id_perfil
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+
+                    this.perfil = response.data
+
+                })
+
+            },
+            editar(){
+
+                const data = {
+                    url: 'editar_perfil',
+                    data: this.perfil
+                }
+
+                request.post(data)
+                .then((response) => {
+                    
+                    if (response.data.status == 200) {
+                        
+                        sw_alert.show(response.data)
+                        .then(() => {
+
+                            this.$emit('update')
+                            this.obtener_detalle()
+
+                        })
+
+                    }
+
+                })
+
+            },
+            clear(){
+
+                this.perfil = {
+                    nombre: null,
+                    descripcion: null,
+                    nueva_competencia: {
+                        nombre: null,
+                        tipo: null
+                    },
+                    tipos_competencias: [],
+                    colaboradores: [],
+                    mostrar_nuevo: false
+                }
+
+            }
+
+        },
+        watch: {
+            id_perfil: function(val){
+
+                if (val) {
+                    
+                    this.obtener_detalle()
+                }
+
+            }
+        },
+        mounted(){
+
+            if (this.id_perfil) {
+
+                this.obtener_detalle()
 
             }
 

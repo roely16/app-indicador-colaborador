@@ -68,7 +68,7 @@
 
         <Modal :fullscreen="fullscreen" :title="title" ref="modal">
 			<template #form>
-				<Form ref="form" @update="obtener_perfiles" @closeModal="close_modal"></Form>
+				<Form :id_perfil="id_perfil" ref="form" @update="obtener_perfiles" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 
@@ -83,6 +83,8 @@
 
     import Modal from '@/components/Modal'
     import Form from '@/components/perfiles/Form'
+
+    import sw_alert from '@/functions/alert'
 
     export default {
 
@@ -102,7 +104,8 @@
 				pageCount: 0,
                 nit: null,
                 codarea: null,
-                fullscreen: false
+                fullscreen: false,
+                id_perfil: null
             }
         },
         methods: {
@@ -128,16 +131,69 @@
 
                 this.title = "Generar Perfil"
                 this.fullscreen = true
-				this.id_evaluacion = null
-				this.id_colaborador = null
+                this.id_perfil = null
 				this.$refs.modal.show()
+                .then(() => {
+                    this.$refs.form.clear()
+                })
 
             },
             close_modal(){
                 
+                this.$refs.modal.close()
+
             },
-            mostrar_editar(){},
-            eliminar(){}
+            mostrar_editar(item){
+
+                this.title = "Editar Perfil"
+                this.fullscreen = true
+                this.id_perfil = item.id
+				this.$refs.modal.show()
+
+            },
+            eliminar(item){
+
+                const data = {
+                    title: '¿Está seguro?',
+                    message: "Una vez eliminado no se podrá recuperar!",
+                    type: 'warning',
+                    confirm_text: 'ELIMINAR',
+                    cancel_text: 'Cancelar'
+                }
+
+                sw_alert.show_confirm(data)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+                        
+                        const data = {
+                            url: 'eliminar_perfil',
+                            data: {
+                                id: item.id
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            
+                            if (response.data.status == 200) {
+                                
+                                sw_alert.show(response.data)
+                                .then(() => {
+
+                                    this.obtener_perfiles()
+
+                                })
+
+                            }
+
+                        })
+
+                    }
+
+                })
+
+            }
 
         },
         mounted(){
