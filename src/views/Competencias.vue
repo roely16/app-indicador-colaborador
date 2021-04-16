@@ -93,7 +93,7 @@
 
         <Modal :fullscreen="fullscreen" :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form ref="form" :id_evaluacion="id_evaluacion" :nit="id_colaborador" @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
+				<Form ref="form" :id_evaluacion="id_evaluacion" :nit="id_colaborador" @update="obtener_reportes" :secciones_prop="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 

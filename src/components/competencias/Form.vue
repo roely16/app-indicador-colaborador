@@ -8,7 +8,7 @@
                     <v-col cols="8">
                         <v-card outlined min-height="600">
                             <v-card-text>
-                                <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
+                                <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones_prop" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
                                 
                                 <v-row dense class="mt-2">
                                     <v-col>
@@ -254,7 +254,8 @@
         props: {
 
             id_evaluacion: String,
-            nit: String
+            nit: String,
+            secciones_prop: Boolean,
 
         },
         data(){
