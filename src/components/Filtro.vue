@@ -22,6 +22,7 @@
             prop_nit: String,
             prop_codarea: String,
             id_colaborador: String,
+            id_area: String,
             cols_areas: {
                 type: String,
                 default: '6'
@@ -83,9 +84,9 @@
 
                 if (this.disabled_seccion) {
                     
-                    const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+                    // const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
 
-                    this.codarea = usuario.codarea
+                    // this.codarea = usuario.codarea
 
                 }
 
@@ -116,6 +117,19 @@
 
                 }
   
+            },
+            id_area: function(val){
+
+                if (val) {
+
+                    this.codarea = val
+
+                }else{
+
+                    this.codarea = null
+
+                }
+
             }
         },
         mounted(){
@@ -129,6 +143,16 @@
             }else{
 
                 this.nit_colaborador = null
+
+            }
+
+            if (this.id_area) {
+                
+                this.codarea = this.id_area
+
+            }else{
+
+                this.codarea = null
 
             }
 

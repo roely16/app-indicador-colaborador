@@ -6,7 +6,7 @@
                     <v-col>
                          <v-card outlined>
                             <v-card-text>
-                                <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
+                                <Filtro :id_colaborador="id_colaborador" :id_area="id_area" :disabled_seccion="!secciones" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
                             </v-card-text>
                         </v-card>
                     </v-col>
@@ -211,7 +211,8 @@
             closed: Boolean,
             secciones: Boolean,
             id_evaluacion: String,
-            id_colaborador: String
+            id_colaborador: String,
+            id_area: String
         },
         data(){
             return{
@@ -360,6 +361,11 @@
                     })
 
                 }
+
+            },
+            setFiltro(){
+                
+                console.log('set filtro');
 
             }
         },
