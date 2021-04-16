@@ -3,33 +3,47 @@
         <v-banner
             single-line
         >
-            <v-icon
-            slot="icon"
-            color="teal "
-            size="36"
-            >
-            mdi-account
-            </v-icon>
-
-                <p class="overline mt-0 mb-0 pt-0 pb-0">
-                    {{ user_data.nombre }} {{ user_data.apellido }}
-                </p>
-                <p class="overline mt-0 mb-0 pt-0 pb-0" style="line-height: 1">
-                    <small>
-                        {{ user_data.seccion.descripcion }}
-                    </small>
-                </p>
-
-            <template v-slot:actions>
-                <v-btn
-                    color="orange darken-1"
-                    icon
-                >
-                    <v-icon>
-                        mdi-bell
+            <v-row align="center">
+                <v-col cols="1">
+                    <v-icon
+                        slot="icon"
+                        color="teal "
+                        size="36"
+                        >
+                        mdi-account
                     </v-icon>
-                </v-btn>
-            </template>
+                </v-col>
+                <v-col cols="10">
+                    <p class="overline mt-0 mb-0 pt-0 pb-0">
+                        {{ user_data.nombre }} {{ user_data.apellido }}
+                    </p>
+                    <p class="overline mt-0 mb-0 pt-0 pb-0" style="line-height: 1">
+                        <small>
+                            {{ user_data.seccion.descripcion }}
+                        </small>
+                    </p>
+                </v-col>
+                <v-col align="end">
+                    <v-menu left :close-on-content-click="false" offset-y>
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                color="orange darken-1"
+                                icon
+                                v-bind="attrs"
+                                v-on="on"
+                            >
+                                <v-icon>
+                                    mdi-bell
+                                </v-icon>
+                            </v-btn>
+                            
+                        </template>
+
+                        <Notificaciones></Notificaciones>
+                    </v-menu>
+                </v-col>
+            </v-row>
+            
         </v-banner>
         <v-row v-if="menu.length > 0" class="mt-4">
             <v-col cols="12" md="4" sm="6" v-for="(item, i) in menu" :key="i">
@@ -87,9 +101,12 @@
 
     import Alert from '@/components/AlertSeleccion'
 
+    import Notificaciones from '@/components/home/Notificaciones'
+
     export default {
         components: {
-            Alert
+            Alert,
+            Notificaciones
         },
         data(){
             return{

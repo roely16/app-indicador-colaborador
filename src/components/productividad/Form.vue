@@ -103,9 +103,13 @@
 
                         <v-row align="center" v-if="criterio.metodo_calificacion == 'verificacion'" >
                             <v-col cols="8">
-                                <v-btn :dark="item.check" @click="item.editable ? click_item(item) : null" :color="item.check ? 'red' : ''" block>
-                                    {{ item.descripcion }}
-                                </v-btn>
+                                <v-card :dark="item.check" @click="item.editable ? click_item(item) : null" :color="item.check ? 'red' : ''" block>
+                                    <v-card-text>
+                                        <span class="body-1">
+                                            {{ item.descripcion }}
+                                        </span>
+                                    </v-card-text>
+                                </v-card>
                             </v-col>
                             <v-col cols="2">
                                 <v-text-field type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable || item.edit" autocomplete="off" dense hide-details outlined></v-text-field>
