@@ -96,7 +96,7 @@
 
                             </v-card-text>
 
-                            <v-card-text>
+                            <v-card-text v-if="perfil">
                                 
                                 <v-expansion-panels>
                                     <v-expansion-panel
@@ -124,14 +124,14 @@
 
                             </v-card-text>
 
-                            <v-card-text v-if="tipos_competencias.length > 0">
+                            <v-card-text v-if="perfil">
 
                                 <v-row align="center" justify="center">
                                     <v-col align="center">
                                         <v-btn @click="$emit('closeModal')" large dark>
                                             CANCELAR
                                         </v-btn>
-                                        <v-btn :disabled="!nit_colaborador" type="submit" large color="primary" class="ml-2">
+                                        <v-btn :disabled="!nit_colaborador || !perfil" type="submit" large color="primary" class="ml-2">
                                             REGISTRAR
                                         </v-btn>
                                     </v-col>
@@ -144,7 +144,12 @@
                                 <AlertSeleccion msg="Seleccione un colaborador"></AlertSeleccion>
 
                             </v-card-text>
-                        
+
+                            <v-card-text v-if="nit_colaborador && !perfil">
+
+                                <AlertSeleccion msg="No existe perfil para este colaborador"></AlertSeleccion>
+
+                            </v-card-text>
                         </v-card>
                     </v-col>
                     <v-col>
@@ -479,30 +484,40 @@
                 // eslint-disable-next-line vue/no-side-effects-in-computed-properties
                 this.total = 0
 
-                this.tipos_competencias.forEach(tipo => {
+                if (this.tipos_competencias.length > 0) {
                     
-                    let total = 0
-
-                    tipo.competencias.forEach(competencia => {
+                    this.tipos_competencias.forEach(tipo => {
                         
-                        total = total + competencia.resultado * (50 / (tipo.competencias.length * 5))
+                        let total = 0
+
+                        if (tipo.competencias) {
+                            
+                            tipo.competencias.forEach(competencia => {
+                            
+                                total = total + competencia.resultado * (50 / (tipo.competencias.length * 5))
+
+                            });
+
+                        }
+                        
+
+                        if (!total) {
+                            
+                            tipo.result = 0
+
+                        }else{
+
+                            tipo.result = total
+
+                        }
+
+                        this.total += tipo.result
+
 
                     });
 
-                    if (!total) {
-                        
-                        tipo.result = 0
-
-                    }else{
-
-                        tipo.result = total
-
-                    }
-
-                    this.total += tipo.result
-
-
-                });
+                }
+                
 
                 return this.tipos_competencias
 
