@@ -8,7 +8,8 @@
                     <v-col cols="8">
                         <v-card outlined min-height="600">
                             <v-card-text>
-                                <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones_prop" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
+                                <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones_prop" 
+                                :id_area="id_area" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
                                 
                                 <v-row dense class="mt-2">
                                     <v-col>
@@ -256,6 +257,7 @@
             id_evaluacion: String,
             nit: String,
             secciones_prop: Boolean,
+            id_area: String
 
         },
         data(){
@@ -413,8 +415,6 @@
 
                     request.post(data)
                     .then((response) => {
-
-                        console.log(response.data)
 
                         if (response.data.status == 200) {
                             

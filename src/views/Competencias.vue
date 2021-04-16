@@ -93,7 +93,7 @@
 
         <Modal :fullscreen="fullscreen" :width="width" :title="title" ref="modal">
 			<template #form>
-				<Form ref="form" :id_evaluacion="id_evaluacion" :nit="id_colaborador" @update="obtener_reportes" :secciones_prop="secciones" @closeModal="close_modal"></Form>
+				<Form ref="form" :id_area="id_area" :id_evaluacion="id_evaluacion" :nit="id_colaborador" @update="obtener_reportes" :secciones_prop="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 
@@ -149,20 +149,30 @@
 				secciones: false,
 				id_evaluacion: null,
 				id_colaborador: null,
+				id_area: null,
                 fullscreen: false
             }
 
         },
         methods: {
 
-            verificar_permisos(){
+            async verificar_permisos(){
 
 				const url = this.$route.name
 
 				verificar_permisos.check(url)
 				.then((response) => {
+
 					this.escritura = response.data.escritura
 					this.secciones = response.data.secciones
+
+					if (!this.secciones) {
+						
+						const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
+						this.id_area = usuario.codarea
+
+					}
 				})
 
 			},
@@ -172,13 +182,20 @@
                 this.fullscreen = true
                 this.id_evaluacion = null
 				this.id_colaborador = null
-
-				this.$refs.modal.show()
+				this.id_area = null
+				
+				this.verificar_permisos()
 				.then(() => {
 
-					this.$refs.form.clear()
+					this.$refs.modal.show()
+					.then(() => {
+
+						this.$refs.form.clear()
+
+					})
 
 				})
+				
 
             },
             close_modal(){
@@ -214,6 +231,8 @@
 				this.fullscreen = true
 				this.id_evaluacion = item.id
 				this.id_colaborador = item.id_persona
+				this.id_area = item.codarea
+				this.secciones = false
 
 				this.$refs.modal.show()
 
