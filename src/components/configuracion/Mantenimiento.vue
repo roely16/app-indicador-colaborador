@@ -38,9 +38,9 @@
 
         <v-row v-if="criterio">
             <v-col>
-                <v-chip label outlined color="deep-orange darken-1" dark small>PONDERACIÓN: {{ criterio_obj.valor }}%</v-chip>
+                <v-chip label outlined color="deep-orange darken-1" dark small>ISO: {{ criterio_obj.valor }}%</v-chip>
 
-                <v-chip v-if="criterio_obj.valor_iso" class="ml-2" label outlined color="blue" dark small>ISO: {{ criterio_obj.valor_iso }}%</v-chip>
+                <v-chip v-if="criterio_obj.valor_no_iso" class="ml-2" label outlined color="blue" dark small>NO ISO: {{ criterio_obj.valor_no_iso }}%</v-chip>
 
             </v-col>
         </v-row>
@@ -56,25 +56,25 @@
 					@page-count="pageCount = $event"
                 >
 
-                    <template v-slot:[`item.valor`] = "{ item }">
-                        <v-chip v-if="item.valor" label outlined color="blue" dark small>
+                    <template v-slot:[`item.asesor`] = "{ item }">
+                        <v-chip v-if="item.valor" label outlined color="deep-orange darken-1" dark small>
                             {{ item.valor }}%
                         </v-chip>
 
-                        <v-chip class="ml-2" v-if="item.valor_no_iso" label outlined color="deep-orange darken-1" dark small>
+                        <v-chip class="ml-2" v-if="item.valor_no_iso" label outlined color="blue" dark small>
                             {{ item.valor_no_iso }}%
                         </v-chip>
 
                     </template>
 
-                     <template v-slot:[`item.aplica`] = "{ item }">
+                    <template v-slot:[`item.colaborador`] = "{ item }">
 
-                        <v-chip v-if="item.aplica_asesor" label outlined color="cyan darken-4" dark x-small>
-                            ASESOR
+                        <v-chip v-if="item.valor_p" label outlined color="deep-orange darken-1" dark small>
+                            {{ item.valor_p }}%
                         </v-chip>
 
-                        <v-chip v-if="item.aplica_prestador" label outlined color="blue-grey darken-2" dark x-small>
-                            PRESTADOR
+                        <v-chip class="ml-2" v-if="item.valor_no_iso_p" label outlined color="blue" dark small>
+                            {{ item.valor_no_iso_p }}%
                         </v-chip>
 
                     </template>
@@ -121,7 +121,7 @@
 
         <Modal ref="modal" :title="title" :width="width">
             <template #form>
-                <FormMantenimiento @closeModal="close_modal" :id_item="id_item" :criterio="criterio_obj" ref="form"></FormMantenimiento>
+                <FormMantenimiento @update="detalle_criterio" @closeModal="close_modal" :id_item="id_item" :criterio="criterio_obj" ref="form"></FormMantenimiento>
             </template>
         </Modal>
     </div>
@@ -194,6 +194,11 @@
                 this.title = "Agregar Item",
                 this.width = "600"
                 this.$refs.modal.show()
+                .then(() => {
+
+                    this.$refs.form.clear()
+
+                })
 
             },
             mostrar_editar(id){
@@ -219,7 +224,28 @@
                     
                     if (result.isConfirmed) {
                         
-                        console.log(id)
+                        const data = {
+                            url: 'eliminar_item_criterio',
+                            data: {
+                                id: id
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            
+                            if (response.data.status == 200) {
+                                
+                                alert.show(response.data)
+                                .then(() => {
+
+                                    this.detalle_criterio()
+
+                                })
+
+                            }
+
+                        })
 
                     }
 

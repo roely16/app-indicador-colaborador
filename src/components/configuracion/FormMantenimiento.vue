@@ -1,25 +1,21 @@
 <template>
     <div>
         <v-container>
-            <v-form>
+            <v-form @submit.prevent="registrar()" v-model="valid" ref="form">
                 <v-row class="mt-2">
                     <v-col cols="12">
-                        <v-text-field hide-details outlined label="Descripción" autocomplete="off"></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-text-field v-if="criterio.valor" hide-details outlined type="number" label="Ponderación" autocomplete="off"></v-text-field>
-                    </v-col>
-                    <v-col cols="6">
-                        <v-text-field v-if="criterio.valor_iso" hide-details outlined type="number" label="ISO" autocomplete="off"></v-text-field>
+                        <v-text-field v-model="item.descripcion" :rules="[v => !!v]" hide-details outlined label="Descripción" autocomplete="off"></v-text-field>
                     </v-col>
                     <v-col cols="6">
                         <v-switch
                             hide-details
                             label="Asesor"
+                            v-model="item.aplica_asesor"
                         ></v-switch>
                         <v-switch
                             hide-details
                             label="Prestador de Servicios"
+                            v-model="item.aplica_prestador"
                         ></v-switch>
                     </v-col>
                 </v-row>
@@ -39,6 +35,10 @@
 </template>
 
 <script>
+
+    import request from '@/functions/request'
+    import alert from '@/functions/alert'
+
     export default {
         props: {
             criterio: Object,
@@ -46,23 +46,86 @@
         },
         data(){
             return{
-
+                valid: true,
+                item: {
+                    descripcion: null,
+                    aplica_asesor: null,
+                    aplica_prestador: null
+                }
             }
         },
         methods: {
 
             obtener_detalle(){
 
+                const data = {
+                    url: '',
+                    data: {
+                        id: this.id_item
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+                    console.log(response.data)
+                })
+
             },
             registrar(){
 
+                this.$refs.form.validate()
+
+                if (this.valid) {
+                    
+                    this.item.id_criterio = this.criterio.id
+
+                    const data = {
+                        url: 'registrar_item_criterio',
+                        data: this.item
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+                        
+                        if (response.data.status == 200) {
+                            
+                            alert.show(response.data)
+                            .then(() => {
+
+                                this.$emit('update')
+
+                            })
+
+                        }
+
+                    })
+
+                }
+
             },
             editar(){
+
+            },
+            clear(){
+
+                this.item = {
+                    descripcion: null,
+                    aplica_asesor: null,
+                    aplica_prestador: null
+                }
+
+                this.$refs.form.resetValidation()
 
             }
 
         },
         mounted(){
+
+            if (this.id_item) {
+                
+                this.obtener_detalle()
+
+            }
 
             console.log(this.criterio)
 
