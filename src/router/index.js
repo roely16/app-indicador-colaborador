@@ -16,6 +16,8 @@ import Competencias from '../views/Competencias.vue'
 import Dashboard from '../views/Dashboard'
 import Configuracion from '../views/Configuracion'
 
+import TestIndividual from '../views/TestIndividual'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -78,6 +80,11 @@ const routes = [
 				path: '/home/configuracion',
 				name: 'configuracion',
 				component: Configuracion
+			},
+			{
+				path: '/home/test_individual',
+				name: 'test_individual',
+				component: TestIndividual
 			}
 		]
 	}
