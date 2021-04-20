@@ -34,6 +34,20 @@
                     <v-col cols="5">
                         <h5>
                             {{ criterio.nombre }}
+                            <v-tooltip v-if="criterio.motivo" bottom>
+                                <template v-slot:activator="{ on, attrs }">
+                                    <v-icon color="error" x-small v-bind="attrs" v-on="on">
+                                        mdi-information
+                                    </v-icon>
+                                </template>
+                                <span class="mb-0 pb-0">
+                                    MOTIVO
+                                </span>
+                                <hr class="mt-2 mb-2">
+                                <span>
+                                    {{ criterio.motivo }}
+                                </span>
+                            </v-tooltip>
                         </h5>
                     </v-col>
                     <v-col>
