@@ -141,7 +141,19 @@
                                             </v-icon>
                                         </v-btn>
                                     </template>
-                                    <span>{{ item.info_calculo }}</span>
+                                    <span>
+                                        
+                                        {{ item.info_calculo }}
+
+                                        <div v-if="item.motivos.length > 0">
+                                            <hr class="mt-2 mb-2">
+                                            <span v-for="(motivo, key) in item.motivos" :key="key">
+                                                {{ motivo.descripcion }}
+                                                <br>
+                                            </span>
+                                            
+                                        </div>   
+                                    </span>
                                 </v-tooltip>
 
                                 
@@ -311,7 +323,7 @@
                     url: 'detalle_reporte',
                     data: {
                         id_evaluacion: this.id_evaluacion,
-                        nit: this.id_colaborador
+                        nit: this.id_colaborador,
                     }
                 }
 
