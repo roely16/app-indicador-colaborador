@@ -3,16 +3,22 @@
 
         <v-card class="mt-4 pl-4 pr-4">
             <v-card-text class="mb-0 pb-0">
-                <v-row>
-                    <v-col>
+                <v-row align="center">
+                    <v-col cols="4">
                         <v-breadcrumbs
                             :items="breadcrumbs"
                             large
                             class="ml-0 pl-0"
                         ></v-breadcrumbs>
                     </v-col>
-                    <v-spacer></v-spacer>
-                    
+					<v-col align="end">
+						<v-btn color="grey lighten-1" label small outlined rounded> 
+							CONFIGURACIÓN
+							<v-icon>
+								mdi-cog
+							</v-icon>
+						</v-btn>
+					</v-col>
                 </v-row>
             </v-card-text>
 
@@ -96,6 +102,8 @@
 				<Form ref="form" :id_area="id_area" :id_evaluacion="id_evaluacion" :nit="id_colaborador" @update="obtener_reportes" :secciones_prop="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
+
+		
 
     </div>
 </template>
