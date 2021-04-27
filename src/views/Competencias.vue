@@ -38,7 +38,7 @@
 						></v-text-field>
 					</v-col>
 					<v-col align="end">
-						<v-btn :disabled="!escritura" color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
+						<v-btn :disabled="!escritura || !habilitar" color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
 							<v-icon>
 								mdi-plus
 							</v-icon>
@@ -165,7 +165,8 @@
 				id_evaluacion: null,
 				id_colaborador: null,
 				id_area: null,
-                fullscreen: false
+                fullscreen: false,
+				habilitar: false
             }
 
         },
@@ -178,11 +179,10 @@
 				verificar_permisos.check(url)
 				.then((response) => {
 
-					console.log(response.data)
-
 					this.escritura = response.data.escritura
 					this.secciones = response.data.secciones,
 					this.conf = response.data.conf
+					this.habilitar = response.data.habilitar
 
 					if (!this.secciones) {
 						
