@@ -12,7 +12,7 @@
                         ></v-breadcrumbs>
                     </v-col>
 					<v-col align="end">
-						<v-btn color="grey lighten-1" label small outlined rounded> 
+						<v-btn v-if="conf" color="grey lighten-1" label small outlined rounded> 
 							CONFIGURACIÓN
 							<v-icon>
 								mdi-cog
@@ -70,7 +70,7 @@
 					</template>
 
 					<template v-slot:[`item.action`]="{ item }">
-                        <v-btn @click="mostrar_editar(item)" x-small icon color="blue accent-4">
+                        <v-btn :disabled="!escritura"  @click="mostrar_editar(item)" x-small icon color="blue accent-4">
                             <v-icon>
                                 mdi-pencil
                             </v-icon>
@@ -155,6 +155,7 @@
 				reportes: [],
 				escritura: false,
 				secciones: false,
+				conf: false,
 				id_evaluacion: null,
 				id_colaborador: null,
 				id_area: null,
@@ -171,8 +172,11 @@
 				verificar_permisos.check(url)
 				.then((response) => {
 
+					console.log(response.data)
+
 					this.escritura = response.data.escritura
-					this.secciones = response.data.secciones
+					this.secciones = response.data.secciones,
+					this.conf = response.data.conf
 
 					if (!this.secciones) {
 						

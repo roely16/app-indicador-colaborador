@@ -29,6 +29,7 @@
                     hide-default-footer
                     :page.sync="page"
 					@page-count="pageCount = $event"
+                    :search="busqueda"
                 >
 
                      <template v-slot:[`item.action`]="{ item }">

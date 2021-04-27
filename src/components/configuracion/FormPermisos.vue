@@ -7,7 +7,8 @@
                         <v-card
                             :color="item.color"
                             dark
-                        >
+                            min-height="190"
+                        >   
                             <div class="d-flex flex-no-wrap justify-space-between">
                                 <div>
                                     <v-card-title
@@ -22,6 +23,7 @@
                                             dense
                                             hide-details
                                             label="Acceso"
+                                            v-if="item.menu_acceso"
                                         ></v-checkbox>
                                         <v-checkbox
                                             :disabled="!item.acceso"
@@ -30,14 +32,25 @@
                                             dense
                                             hide-details
                                             label="Escritura"
+                                            v-if="item.menu_escritura"
                                         ></v-checkbox>
                                         <v-checkbox
                                             :disabled="!item.acceso"
                                             v-model="item.secciones"
-                                            class="mt-0 mb-2"
+                                            class="mt-0"
                                             dense
                                             hide-details
                                             label="Secciones"
+                                            v-if="item.menu_secciones"
+                                        ></v-checkbox>
+                                        <v-checkbox
+                                            :disabled="!item.acceso"
+                                            v-model="item.conf"
+                                            class="mt-0 mb-2"
+                                            dense
+                                            hide-details
+                                            label="Configuración"
+                                            v-if="item.menu_conf"
                                         ></v-checkbox>
                                     </v-card-subtitle>
 

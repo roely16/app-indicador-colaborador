@@ -31,6 +31,7 @@
                     hide-default-footer
                     :page.sync="page"
 					@page-count="pageCount = $event"
+                    :search="busqueda"
                 >   
 
                     <template slot="no-data">
@@ -105,7 +106,7 @@
                 nit: null,
                 codarea: null,
                 fullscreen: false,
-                id_perfil: null
+                id_perfil: null,
             }
         },
         methods: {
