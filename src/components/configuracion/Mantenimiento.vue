@@ -192,7 +192,7 @@
             mostrar_modal(){
 
                 this.title = "Agregar Item",
-                this.width = "600"
+                this.width = "800"
                 this.$refs.modal.show()
                 .then(() => {
 
@@ -205,7 +205,7 @@
 
                 this.id_item = id
                 this.title = "Editar Item"
-                this.width = "600"
+                this.width = "800"
                 this.$refs.modal.show()
 
             },

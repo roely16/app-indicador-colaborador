@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-container>
-            <v-form @submit.prevent="registrar()" v-model="valid" ref="form">
+            <v-form @submit.prevent="!id_item ? registrar() : editar()" v-model="valid" ref="form">
                 <v-row class="mt-2">
                     <v-col cols="12">
                         <v-text-field v-model="item.descripcion" :rules="[v => !!v]" hide-details outlined label="Descripción" autocomplete="off"></v-text-field>
@@ -108,18 +108,16 @@
                     request.post(data)
                     .then((response) => {
                         
-                        console.log(response.data)
-
-                        // if (response.data.status == 200) {
+                        if (response.data.status == 200) {
                             
-                        //     alert.show(response.data)
-                        //     .then(() => {
+                            alert.show(response.data)
+                            .then(() => {
 
-                        //         this.$emit('update')
+                                this.$emit('update')
 
-                        //     })
+                            })
 
-                        // }
+                        }
 
                     })
 
@@ -128,7 +126,32 @@
             },
             editar(){
 
-                console.log('editar');
+                this.$refs.form.validate()
+
+                if (this.valid) {
+
+                    const data = {
+                        url: 'editar_item_criterio',
+                        data: this.item
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+                        
+                        if (response.data.status == 200) {
+                            
+                            alert.show(response.data)
+                            .then(() => {
+
+                                this.$emit('update')
+
+                            })
+
+                        }
+                        
+                    })
+
+                }
 
             },
             clear(){

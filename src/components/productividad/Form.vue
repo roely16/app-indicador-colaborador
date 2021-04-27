@@ -281,7 +281,8 @@
                             items: this.items,
                             id_persona: this.nit_colaborador,
                             criterio: this.criterio,
-                            month: this.date
+                            month: this.date,
+                            calificacion: this.total_evaluacion
                         }
                     }
 
@@ -353,7 +354,8 @@
                             nit: this.id_colaborador,
                             id_evaluacion: this.id_evaluacion,
                             criterio: this.criterio,
-                            month: this.date
+                            month: this.date,
+                            calificacion: this.total_evaluacion
                         }
                     }
 
