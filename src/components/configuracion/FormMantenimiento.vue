@@ -1,16 +1,27 @@
 <template>
     <div>
         <v-container>
-            <v-form @submit.prevent="!id_item ? registrar() : editar()" v-model="valid" ref="form">
+            <v-row class="mt-10 mb-10" v-if="loading">
+                <v-col align="center">
+                    <v-progress-circular
+                        :size="70"
+                        :width="7"
+                        color="teal"
+                        indeterminate
+                    ></v-progress-circular>
+                </v-col>
+            </v-row>
+            <v-form @submit.prevent="!id_item ? registrar() : editar()" v-model="valid" ref="form" v-if="!loading">
+                
                 <v-row class="mt-2">
                     <v-col cols="12">
                         <v-text-field v-model="item.descripcion" :rules="[v => !!v]" hide-details outlined label="Descripción" autocomplete="off"></v-text-field>
                     </v-col>
 
-                    <v-col cols="12" class="pb-0">
-                        <v-btn rounded @click="marcar_todos()" small :color="!all_checked ? 'primary' : 'error'">
+                    <v-col cols="12" align="end" class="pb-0">
+                        <v-btn @click="marcar_todos()" small :color="!all_checked ? 'success' : 'error'">
                             {{ !all_checked ? 'SELECCIONAR' : 'LIMPIAR' }} 
-                            <v-icon>
+                            <v-icon size="20">
                                 {{ !all_checked ? 'mdi-check-all' : 'mdi-close-circle' }}
                             </v-icon>
                         </v-btn>
@@ -47,6 +58,7 @@
                     </v-col>
                 </v-row>
             </v-form>
+
         </v-container>
     </div>
 </template>
@@ -71,12 +83,15 @@
                     aplica_prestador: null,
                     areas: []
                 },
-                areas: []
+                areas: [],
+                loading: false
             }
         },
         methods: {
 
             obtener_detalle(){
+
+                this.loading = true
 
                 const data = {
                     url: 'detalle_item_criterio',
@@ -88,7 +103,7 @@
                 request.post(data)
                 .then((response) => {
                     this.item = response.data
-                    console.log(response.data)
+                    this.loading = false
                 })
 
             },
