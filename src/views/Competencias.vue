@@ -12,7 +12,7 @@
                         ></v-breadcrumbs>
                     </v-col>
 					<v-col align="end">
-						<v-btn v-if="conf" color="grey lighten-1" label small outlined rounded> 
+						<v-btn @click="mostrar_configuracion()" v-if="conf" color="grey lighten-1" label small outlined rounded> 
 							CONFIGURACIÓN
 							<v-icon>
 								mdi-cog
@@ -103,7 +103,11 @@
 			</template>
 		</Modal>
 
-		
+		<Modal :fullscreen="fullscreen" :width="width" :title="title" ref="modal_conf">
+			<template #form>
+				<Conf></Conf>
+			</template>
+		</Modal>
 
     </div>
 </template>
@@ -112,6 +116,7 @@
 
     import Modal from '@/components/Modal.vue'
 	import Form from '@/components/competencias/Form.vue'
+	import Conf from '@/components/competencias/Conf.vue'
 
     import verificar_permisos from '@/functions/verificar_permisos'
 
@@ -124,7 +129,8 @@
         components: {
             Alert,
             Modal,
-            Form
+            Form,
+			Conf
         },
         data(){
 
@@ -210,6 +216,15 @@
 				
 
             },
+			mostrar_configuracion(){
+				
+				this.title = "Periodos de Evaluación"
+				this.width = "800"
+				this.fullscreen = false
+
+				this.$refs.modal_conf.show()
+
+			},
             close_modal(){
 				this.$refs.modal.close()
 			},
