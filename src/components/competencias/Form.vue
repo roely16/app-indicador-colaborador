@@ -16,7 +16,6 @@
                                         <v-text-field readonly v-model="perfil" autocomplete="off" hide-details outlined single-line label="Perfil de Servicios"></v-text-field>
                                     </v-col>
                                     <v-col>
-                                        <!-- <v-text-field autocomplete="off" hide-details outlined single-line label="Período de Evaluación"></v-text-field> -->
 
                                         <v-menu
                                             ref="menu"
@@ -37,6 +36,7 @@
                                                     readonly
                                                     v-bind="attrs"
                                                     v-on="on"
+                                                    hide-details
                                                 ></v-text-field>
                                                 </template>
                                             <v-date-picker
@@ -62,6 +62,18 @@
                                                 </v-btn>
                                             </v-date-picker>
                                         </v-menu>
+                                    </v-col>
+                                </v-row>
+                                
+                                <!-- Posponer -->
+                                <v-row v-if="nit_colaborador && perfil">
+                                    <v-col align="end">
+                                        <v-btn @click="posponer()" small color="warning">
+                                            POSPONER 
+                                            <v-icon size="18" class="ml-1">
+                                                mdi-clock
+                                            </v-icon>
+                                        </v-btn>
                                     </v-col>
                                 </v-row>
                                 
@@ -322,10 +334,13 @@
                 request.post(data)
                 .then((response) => {
 
-                    console.log(response.data);
                     if (response.data.perfil) {
                         
                         this.perfil = response.data.perfil.nombre
+
+                    }else{
+
+                        this.perfil = null
 
                     }
                     
@@ -353,8 +368,6 @@
 
                     request.post(data)
                     .then((response) => {
-
-                        console.log(response.data)
 
                         if (response.data.status == 200) {
                             
@@ -447,6 +460,51 @@
                 this.perfil = null
 
                 this.$refs.form.resetValidation()
+
+            },
+            posponer(){
+
+                const confirm = {
+                    title: '¿Está seguro?',
+					message: 'Se solicitará una prórroga para realizar la evaluación!',
+					type: 'warning',
+					confirm_text: 'ACEPTAR',
+					cancel_text: 'CANCELAR'
+                }
+
+                alert.show_confirm(confirm)
+                .then((result) => {
+
+                    if (result.isConfirmed) {
+                        
+                        const data = {
+                            url: 'posponer_evaluacion',
+                            data: {
+                                nit_colaborador: this.nit_colaborador,
+                                month: this.date
+                            }
+                        }
+
+                        request.post(data)
+                        .then((response) => {
+                            
+                            if (response.data.status == 200) {
+                            
+                                alert.show(response.data)
+                                .then(() => {
+
+                                    this.$emit('update')
+                                    this.$emit('closeModal')
+
+                                })
+
+                            }
+
+                        })
+
+                    }
+
+                })
 
             }
 
