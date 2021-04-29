@@ -4,16 +4,20 @@
             single-line
         >
             <v-row align="center">
-                <v-col cols="1">
+                <v-col cols="1" class="pr-0 mr-0">
                     <v-icon
                         slot="icon"
                         color="teal "
                         size="36"
-                        >
+                        v-if="!user_data.imagen64"
+                    >
                         mdi-account
                     </v-icon>
+                    <v-avatar v-if="user_data.imagen64">
+                        <img :src="user_data.imagen64">
+                    </v-avatar>
                 </v-col>
-                <v-col cols="10">
+                <v-col cols="10" class="pl-0 ml-0">
                     <p class="overline mt-0 mb-0 pt-0 pb-0">
                         {{ user_data.nombre }} {{ user_data.apellido }}
                     </p>

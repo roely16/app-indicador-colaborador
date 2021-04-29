@@ -68,7 +68,9 @@
 								apellido: response.data.data.apellido,
 								nit: response.data.data.nit,
 								codarea: response.data.data.codarea,
-								seccion: response.data.data.seccion
+								seccion: response.data.data.seccion,
+								imagen: response.data.data.imagen,
+								imagen64: response.data.data.imagen64
 							}
 
 							localStorage.setItem('app-estado-desarrollo', JSON.stringify(datos_usuarios))
