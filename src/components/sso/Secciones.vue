@@ -47,7 +47,8 @@
                                                 <v-row dense align="center">
                                                     <v-col cols="1" class="mr-4">
                                                         <v-avatar size="40">
-                                                            <v-img src="@/assets/img/avatar.png"></v-img>
+                                                            <v-img v-if="!empleado.imagen64" src="@/assets/img/avatar.png"></v-img>
+                                                            <v-img v-if="empleado.imagen64" :src="empleado.imagen64"></v-img>
                                                         </v-avatar>
                                                     </v-col>
                                                     <v-col>
@@ -92,6 +93,7 @@
 
                 request.post(data)
                 .then((response) => {
+                    console.log(response.data)
                     this.secciones = response.data
                 })
 

@@ -84,8 +84,13 @@
                                             overlap
                                             :value="false"
                                         >
-                                            <v-avatar size="40">
+                                            <!-- <v-avatar size="40">
                                                 <v-img src="@/assets/img/avatar.png"></v-img>
+                                            </v-avatar> -->
+
+                                             <v-avatar size="40">
+                                                <v-img v-if="!integrante.imagen64" src="@/assets/img/avatar.png"></v-img>
+                                                <v-img v-if="integrante.imagen64" :src="integrante.imagen64"></v-img>
                                             </v-avatar>
                                         </v-badge>
                                     </v-col>
