@@ -27,6 +27,7 @@
 							hide-details
 							outlined
 							autocomplete="off"
+							v-model="search"
 						></v-text-field>
 					</v-col>
 					<v-col align="end">
@@ -39,6 +40,7 @@
 				</v-row>
 
 				<v-data-table
+					:search="search"
 					:headers="headers"
 					:items="reportes"
 					:items-per-page="5"
@@ -114,6 +116,7 @@
 		},
 		data(){
 			return{
+				search: null,
 				codarea: null,
 				colaborador: null,
 				page: 1,

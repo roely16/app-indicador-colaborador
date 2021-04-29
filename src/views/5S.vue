@@ -21,6 +21,7 @@
 				<v-row align="center" class="mb-2">
 					<v-col cols="4">
 						<v-text-field
+							v-model="search"
 							prepend-inner-icon="mdi-magnify"
 							label="Buscar..."
 							single-line
@@ -39,6 +40,7 @@
 				</v-row>
 
 				<v-data-table
+					:search="search"
 					:headers="headers"
 					:items="reportes"
 					:items-per-page="5"
@@ -115,6 +117,7 @@
 		},
 		data(){
 			return{
+				search: null,
 				codarea: null,
 				colaborador: null,
 				page: 1,
