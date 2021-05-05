@@ -158,9 +158,37 @@
 
                                 
                             </v-col>
-                            <v-col v-if="item.show_description" cols="8">
-                                <v-textarea label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
+                            
+                        </v-row>
+
+                        <v-row v-if="item.show_description" align="center">
+
+                            <v-col cols="12">
+                                <v-card outlined class="mb-4">
+
+                                    <v-card-text>
+
+                                        <v-row>
+                                            <v-col cols="8">
+                                                <v-textarea label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
+                                            </v-col>
+                                            
+                                            <v-col cols="3" v-if="item.data_calculo">
+                                                <v-row align="center">
+                                                    <v-col cols="12">
+                                                        <v-text-field readonly v-model="item.data_calculo.operados" hide-details dense outlined label="Operados"></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12">
+                                                        <v-text-field readonly v-model="item.data_calculo.correcciones" hide-details dense outlined label="Corregidos"></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-col>
+                                        </v-row>
+
+                                    </v-card-text>
+                                </v-card>
                             </v-col>
+
                         </v-row>
                     </v-col>
 
