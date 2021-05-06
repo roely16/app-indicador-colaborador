@@ -26,16 +26,14 @@
                     </v-col>
 
                     <v-col cols="3" align="end">
-                        <v-chip label color="success">
-                            {{ date }}
-                        </v-chip>
-                        <v-menu
+                         <v-menu
                             ref="menu"
                             v-model="menu"
                             :close-on-content-click="false"
                             :return-value.sync="date"
                             transition="scale-transition"
-                            offset-y
+                            origin="top left"
+                            left
                             max-width="290px"
                             min-width="auto"
                         >
@@ -71,6 +69,10 @@
                             </v-date-picker>
                         </v-menu>
 
+                        <v-chip label color="success">
+                            {{ date }}
+                        </v-chip>
+                       
                     </v-col>
 
                     <v-col class="pb-0" v-for="(item, key) in items" :key="key" cols="12">
@@ -103,11 +105,51 @@
 
                         <v-row align="center" v-if="criterio.metodo_calificacion == 'verificacion'" >
                             <v-col cols="8">
-                                <v-card :dark="item.check" @click="item.editable ? click_item(item) : null" :color="item.check ? 'red' : ''" block>
+                                <v-card outlined :dark="item.check" :color="item.check ? 'red' : ''" block>
                                     <v-card-text>
-                                        <span class="body-1">
-                                            {{ item.descripcion }}
-                                        </span>
+                                       
+                                        <v-row align="center">
+                                            <v-col cols="10">
+                                                    <span class="body-1">
+                                                        {{ item.descripcion }}
+                                                    </span>
+                                            </v-col>
+                                            <v-col cols="2" align="end">
+                                                <v-btn v-if="item.editable" :color="!item.check ? 'success' : null" icon @click="item.editable ? click_item(item) : null">
+                                                    <v-icon>
+                                                        {{ !item.check ? 'mdi-check' : 'mdi-close-circle' }}
+                                                    </v-icon>
+                                                </v-btn>
+                                            </v-col>
+                                        </v-row>
+
+
+                                    </v-card-text>
+
+                                    <v-divider></v-divider>
+
+                                    <v-card-text v-if="item.show_description" >
+                                        
+                                        <v-row align="center">
+                                            <v-col cols="8">
+                                                <v-textarea hide-details label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
+                                            </v-col>
+                                            
+                                            <v-col cols="3" v-if="item.data_calculo">
+                                                <v-row align="center">
+                                                    <v-col cols="12">
+                                                        <v-text-field autocomplete="off" @change="actualizarNota(item)" :rules="[v => !!v]" type="number" :readonly="!item.data_calculo.editable" v-model="item.data_calculo.operados" hide-details dense outlined label="Operados"></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" @change="actualizarNota(item)" v-if="item.data_calculo.show_correcciones">
+                                                        <v-text-field autocomplete="off" :rules="[v => !!v]" type="number" :readonly="!item.data_calculo.editable" v-model="item.data_calculo.correcciones" hide-details dense outlined label="Correcciones"></v-text-field>
+                                                    </v-col>
+                                                    <v-col cols="12" @change="actualizarNota(item)" v-if="item.data_calculo.show_snc">
+                                                        <v-text-field autocomplete="off" :rules="[v => !!v]" type="number" :readonly="!item.data_calculo.editable" v-model="item.data_calculo.snc" hide-details dense outlined label="SNC"></v-text-field>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-col>
+                                        </v-row>
+
                                     </v-card-text>
                                 </v-card>
                             </v-col>
@@ -161,35 +203,20 @@
                             
                         </v-row>
 
-                        <v-row v-if="item.show_description" align="center">
+                        <!-- <v-row align="center">
 
                             <v-col cols="12">
                                 <v-card outlined class="mb-4">
 
                                     <v-card-text>
 
-                                        <v-row>
-                                            <v-col cols="8">
-                                                <v-textarea label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
-                                            </v-col>
-                                            
-                                            <v-col cols="3" v-if="item.data_calculo">
-                                                <v-row align="center">
-                                                    <v-col cols="12">
-                                                        <v-text-field readonly v-model="item.data_calculo.operados" hide-details dense outlined label="Operados"></v-text-field>
-                                                    </v-col>
-                                                    <v-col cols="12">
-                                                        <v-text-field readonly v-model="item.data_calculo.correcciones" hide-details dense outlined label="Corregidos"></v-text-field>
-                                                    </v-col>
-                                                </v-row>
-                                            </v-col>
-                                        </v-row>
+                                        
 
                                     </v-card-text>
                                 </v-card>
                             </v-col>
 
-                        </v-row>
+                        </v-row> -->
                     </v-col>
 
                     <!-- Calificación -->
@@ -408,6 +435,23 @@
             setFiltro(){
                 
                 console.log('set filtro');
+
+            },
+            actualizarNota(item){
+
+                // Si es SNC
+                if (item.data_calculo.show_snc) {
+                    
+                    item.calificacion = 100 - (100 * (item.data_calculo.snc / item.data_calculo.operados))
+
+                }
+
+                // Si es corrección
+                if (item.data_calculo.show_correcciones) {
+                    
+                    item.calificacion = 100 - (100 * (item.data_calculo.correcciones / item.data_calculo.operados))
+
+                }
 
             }
         },

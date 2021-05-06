@@ -152,7 +152,7 @@
 			mostrar_modal(){
 				
 				this.title = "Generar Evaluación"
-				this.width = '800'
+				this.width = '1000'
 				this.id_evaluacion = null
 				this.id_colaborador = null
 				this.id_area = null
@@ -242,7 +242,7 @@
 			mostrar_editar(item){
 
 				this.title = "Editar Evaluación"
-				this.width = '800'
+				this.width = '1000'
 				this.id_evaluacion = item.id
 				this.id_colaborador = item.id_persona
 				this.id_area = item.codarea
