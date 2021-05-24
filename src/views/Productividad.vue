@@ -63,13 +63,13 @@
 					</template>
 
 					<template v-slot:[`item.action`]="{ item }">
-                        <v-btn @click="mostrar_editar(item)" x-small icon color="blue accent-4">
+                        <v-btn :disabled="!admin" @click="mostrar_editar(item)" x-small icon color="blue accent-4">
                             <v-icon>
                                 mdi-pencil
                             </v-icon>
                         </v-btn>
 
-                        <v-btn :disabled="!escritura" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
+                        <v-btn :disabled="!admin" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
                             <v-icon>
                                 mdi-delete
                             </v-icon>
@@ -144,6 +144,7 @@
 				reportes: [],
 				escritura: false,
 				secciones: false,
+				admin: false,
 				id_evaluacion: null,
 				id_colaborador: null,
 				id_area: null
@@ -230,15 +231,18 @@
 				.then((response) => {
 
 					this.escritura = response.data.escritura
-					this.secciones = response.data.secciones
+					this.secciones = true
+					this.admin = response.data.admin
 
-					if (!this.secciones) {
+					// this.secciones = response.data.secciones
+
+					// if (!this.secciones) {
 						
-						const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+					// 	const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
 
-						this.id_area = usuario.codarea
+					// 	this.id_area = usuario.codarea
 
-					}
+					// }
 					
 				})
 
@@ -302,7 +306,7 @@
 
 			this.verificar_permisos()
 
-			this.obtener_areas()
+			//this.obtener_areas()
 			this.obtener_reportes()
 
 		}

@@ -212,20 +212,6 @@
                             
                         </v-row>
 
-                        <!-- <v-row align="center">
-
-                            <v-col cols="12">
-                                <v-card outlined class="mb-4">
-
-                                    <v-card-text>
-
-                                        
-
-                                    </v-card-text>
-                                </v-card>
-                            </v-col>
-
-                        </v-row> -->
                     </v-col>
 
                     <!-- Calificación -->

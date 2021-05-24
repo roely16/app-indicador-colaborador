@@ -7,7 +7,7 @@
                         <v-card
                             :color="item.color"
                             dark
-                            min-height="190"
+                            min-height="215"
                         >   
                             <div class="d-flex flex-no-wrap justify-space-between">
                                 <div>
@@ -42,6 +42,15 @@
                                             hide-details
                                             label="Secciones"
                                             v-if="item.menu_secciones"
+                                        ></v-checkbox>
+                                        <v-checkbox
+                                            :disabled="!item.acceso"
+                                            v-model="item.admin"
+                                            class="mt-0"
+                                            dense
+                                            hide-details
+                                            label="Administrador"
+                                            v-if="item.menu_admin"
                                         ></v-checkbox>
                                         <v-checkbox
                                             :disabled="!item.acceso"

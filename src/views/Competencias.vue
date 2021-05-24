@@ -70,13 +70,13 @@
 					</template>
 
 					<template v-slot:[`item.action`]="{ item }">
-                        <v-btn :disabled="!escritura"  @click="mostrar_editar(item)" x-small icon color="blue accent-4">
+                        <v-btn :disabled="!admin"  @click="mostrar_editar(item)" x-small icon color="blue accent-4">
                             <v-icon>
                                 mdi-pencil
                             </v-icon>
                         </v-btn>
 
-                        <v-btn :disabled="!escritura" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
+                        <v-btn :disabled="!admin" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
                             <v-icon>
                                 mdi-delete
                             </v-icon>
@@ -162,6 +162,7 @@
 				escritura: false,
 				secciones: false,
 				conf: false,
+				admin: false,
 				id_evaluacion: null,
 				id_colaborador: null,
 				id_area: null,
@@ -180,9 +181,10 @@
 				.then((response) => {
 
 					this.escritura = response.data.escritura
-					this.secciones = response.data.secciones,
+					this.secciones = true,
 					this.conf = response.data.conf
 					this.habilitar = response.data.habilitar
+					this.admin = response.data.admin
 
 					if (!this.secciones) {
 						

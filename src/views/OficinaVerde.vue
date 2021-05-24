@@ -63,13 +63,13 @@
 					</template>
 
 					<template v-slot:[`item.action`]="{ item }">
-						<v-btn @click="mostrar_editar(item)" x-small icon color="blue accent-4">
+						<v-btn :disabled="!admin" @click="mostrar_editar(item)" x-small icon color="blue accent-4">
 							<v-icon>
 								mdi-pencil
 							</v-icon>
 						</v-btn>
 
-						<v-btn :disabled="!escritura" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
+						<v-btn :disabled="!admin" @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
 							<v-icon>
 								mdi-delete
 							</v-icon>
@@ -144,6 +144,7 @@
 				reportes: [],
 				escritura: false,
 				secciones: false,
+				admin: false,
 				id_evaluacion: null,
 				id_colaborador: null,
 				id_area: null
@@ -174,9 +175,16 @@
 			},
 			obtener_areas(){
 
+				const route = this.$route.name
+
+                const user = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
 				const data = {
 					url: 'obtener_areas',
-					data: null
+					data: {
+                        modulo: route,
+                        nit: user.nit
+                    }
 				}
 
 				request.post(data)
@@ -231,6 +239,7 @@
 
 					this.escritura = response.data.escritura
 					this.secciones = response.data.secciones
+					this.admin = response.data.admin
 
 					if (!this.secciones) {
 						

@@ -48,9 +48,16 @@
 
             obtener_areas(){
 
+                const route = this.$route.name
+
+                const user = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
 				const data = {
 					url: 'obtener_areas',
-					data: null
+					data: {
+                        modulo: route,
+                        nit: user.nit
+                    }
 				}
 
 				request.post(data)
@@ -61,10 +68,16 @@
 			},
             obtener_colaboradores(){
 
+                const route = this.$route.name
+
+                const user = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
+
 				const data = {
 					url: 'obtener_colaboradores',
 					data: {
-						codarea: this.codarea
+						codarea: this.codarea,
+                        nit: user.nit,
+                        modulo: route
 					}
 				}
 
