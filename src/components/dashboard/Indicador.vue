@@ -9,9 +9,8 @@
                     </v-col>
                     <v-col>
                         <v-avatar>
-                            <img
-                                :src="require('@/assets/img/profile.png')"
-                            >
+                            <v-img v-if="!colaborador.imagen64" src="@/assets/img/avatar.png"></v-img>
+                            <v-img v-if="colaborador.imagen64" :src="colaborador.imagen64"></v-img>
                         </v-avatar>
                     </v-col>
                 </v-row>

@@ -110,9 +110,10 @@
                                        
                                         <v-row align="center">
                                             <v-col cols="10">
-                                                    <span class="body-1">
-                                                        {{ item.descripcion }}
-                                                    </span>
+                                                <span class="body-1">
+                                                    {{ item.descripcion }}
+                                                </span>
+                                                <v-chip outlined v-if="item.changed" :color="item.check ? 'white' : 'warning'" label small>Deberá de ingresar una observación</v-chip>
                                             </v-col>
                                             <v-col cols="2" align="end">
                                                 <v-btn v-if="item.editable" :color="!item.check ? 'success' : null" icon @click="item.editable ? click_item(item) : null">
@@ -154,10 +155,18 @@
                                 </v-card>
                             </v-col>
                             <v-col cols="2">
-                                <v-text-field type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable || item.edit" autocomplete="off" dense hide-details outlined></v-text-field>
+                                <v-text-field @change="() => {
+                                    item.changed = true
+                                    item.show_description = true
+                                }" type="number" class="centered-input" v-model="item.calificacion" :disabled="!item.editable || item.edit" autocomplete="off" dense hide-details outlined></v-text-field>
                             </v-col>
                             <v-col>
-                                <v-btn :disabled="!item.editable" @click="item.edit = !item.edit" x-small color="blue darken-4" icon>
+                                <v-btn :disabled="!item.editable" @click="() => {
+
+                                    item.edit = !item.edit 
+                                    item.calificacion_bk = item.edit ? item.calificacion_bk : item.calificacion
+                                       
+                                }" x-small color="blue darken-4" icon>
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
@@ -444,12 +453,16 @@
                     
                     item.calificacion = 100 - (100 * (item.data_calculo.snc / item.data_calculo.operados))
 
+                    item.calificacion = item.calificacion.toFixed(2)
+
                 }
 
                 // Si es corrección
                 if (item.data_calculo.show_correcciones) {
                     
                     item.calificacion = 100 - (100 * (item.data_calculo.correcciones / item.data_calculo.operados))
+
+                    item.calificacion = item.calificacion.toFixed(2)
 
                 }
 
@@ -507,18 +520,20 @@
                 let total = 0
 
                 this.items.forEach(item => {
-                
+                                        
                     if (!item.calificacion) {
                         
                         item.calificacion = 0
 
                     }
 
-                    total += (parseInt(item.calificacion) * item.valor)
+                    total += (parseFloat(item.calificacion) * parseFloat(item.valor))
 
                 });
-
+                                
                 let result = total / this.criterio.valor
+
+                console.log(result);
 
                 return result > 100 ? 100 : result.toFixed(2)
 
