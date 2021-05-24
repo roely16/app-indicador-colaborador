@@ -84,6 +84,7 @@
 					v-model="page"
 					:length="pageCount"
 					v-if="reportes.length > 0"
+					:total-visible="5"
 				></v-pagination>
 			</v-card-text>
 		</v-card>

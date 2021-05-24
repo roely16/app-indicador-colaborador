@@ -53,6 +53,7 @@
 					class="mt-4 mb-4"
 					v-model="page"
 					:length="pageCount"
+                    :total-visible="5"
 				></v-pagination>
 
             </v-col>
