@@ -26,7 +26,7 @@
 
                         <v-row class="mt-4">
                             <v-col class="text-center" cols="12">
-                                <span class="text-h3">Indicador de Estado de Desarrollo</span>
+                                <span class="text-h3">Indicadores de Estado de Desarrollo</span>
                             </v-col>
                         </v-row>
                         <v-row>
@@ -94,9 +94,9 @@
 
                 <v-card-text>
 
-                    <v-row align="center" justify="center" fill-height>
-                        <v-col cols="4">
-                            <Individual v-if="nit" :nit="nit" ref="indicador"></Individual>
+                    <v-row fill-height>
+                        <v-col cols="4" v-for="(integrante, key) in equipo" :key="key">
+                            <Individual v-if="integrante.nit" :nit="integrante.nit" ref="indicador"></Individual>
                         </v-col>
                     </v-row>
 
@@ -112,6 +112,8 @@
 
     import Individual from '@/components/dashboard/Individual.vue'
 
+    import request from '@/functions/request'
+
     export default {
         components: {
             Individual
@@ -122,7 +124,8 @@
                 date: this.$store.getters.getFecha,
                 menu: false,
                 modal: false,
-                nit: null
+                nit: null,
+                equipo: []
             }
         },
         methods: {
@@ -134,7 +137,24 @@
             },
             reload(){
 
-                this.$refs.indicador.obtener_datos()
+                //this.$refs.indicador.obtener_datos()
+
+            },
+            obtener_equipo(){
+
+                const data = {
+                    url: 'equipo_indicadores',
+                    data: {
+                        nit: this.nit
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+                    
+                    this.equipo = response.data
+
+                })
 
             }
 
@@ -153,6 +173,9 @@
             const nit = atob(param)
             
             this.nit = nit
+
+            // Obtener el equipo
+            this.obtener_equipo()
 
         }
     }

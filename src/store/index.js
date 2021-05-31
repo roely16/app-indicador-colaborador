@@ -5,11 +5,22 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    fecha: new Date().toISOString().substr(0, 7)
   },
   mutations: {
+
+    setFecha(state, payload){
+      
+      state.fecha = payload
+
+    }
+
   },
   actions: {
   },
-  modules: {
+  getters: {
+
+    getFecha: state => state.fecha
+
   }
 })

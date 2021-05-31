@@ -17,6 +17,7 @@ import Dashboard from '../views/Dashboard'
 import Configuracion from '../views/Configuracion'
 
 import TestIndividual from '../views/TestIndividual'
+import IndicadorEquipo from '../views/IndicadorEquipo'
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,16 @@ const routes = [
 		path: '/',
 		name: 'login',
 		component: Login
+	},
+	{
+		path: '/indicador/:nit',
+		name: 'indicador',
+		component: TestIndividual
+	},
+	{
+		path: '/indicador_equipo/:nit',
+		name: 'indicador_equipo',
+		component: IndicadorEquipo
 	},
 	{
 		path: '/home',

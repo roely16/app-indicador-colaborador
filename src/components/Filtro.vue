@@ -48,16 +48,9 @@
 
             obtener_areas(){
 
-                const route = this.$route.name
-
-                const user = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
-
 				const data = {
-					url: 'obtener_areas',
-					data: {
-                        modulo: route,
-                        nit: user.nit
-                    }
+					url: 'obtener_todas_areas',
+					data: null
 				}
 
 				request.post(data)
