@@ -2,7 +2,7 @@
     <div>
 		<v-card class="mt-4 pl-4 pr-4">
 			<v-card-text class="mb-0 pb-0">
-				<v-row>
+				<v-row align="center">
 					<v-col>
 						<v-breadcrumbs
 							:items="breadcrumbs"
@@ -10,7 +10,15 @@
 							class="ml-0 pl-0"
 						></v-breadcrumbs>
 					</v-col>
-					<v-spacer></v-spacer>
+					
+					<v-col v-if="admin" align="end">
+						<v-btn @click="exportar()" color="grey lighten-1" label small outlined rounded> 
+							EXPORTAR
+							<v-icon>
+								mdi-table-arrow-right
+							</v-icon>
+						</v-btn>
+					</v-col>
 					
 				</v-row>
 			</v-card-text>
@@ -95,6 +103,17 @@
 				:id_area="id_area" :id_colaborador="id_colaborador" @update="obtener_reportes" :secciones="secciones" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
+
+		<!-- 
+			Modal para exportar los datos
+		-->
+
+		<Modal :width="width" :title="title" ref="modal_export">
+			<template #form>
+				<Exportar></Exportar>
+			</template>
+		</Modal>
+
 	</div>
 </template>
 
@@ -102,6 +121,7 @@
 
 	import Modal from '@/components/Modal.vue'
 	import Form from '@/components/productividad/Form.vue'
+	import Exportar from '@/components/Exportar.vue'
 
 	import request from '@/functions/request.js'
 	import verificar_permisos from '@/functions/verificar_permisos'
@@ -114,7 +134,8 @@
 		components: {
 			Modal,
 			Form,
-			Alert
+			Alert,
+			Exportar
 		},
 		data(){
 			return{
@@ -240,6 +261,8 @@
 					this.secciones = response.data.secciones
 					this.admin = response.data.admin
 
+					this.$store.commit('setCriterio', response.data.criterio)
+
 					if (!this.secciones) {
 						
 						const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
@@ -300,6 +323,14 @@
 					}
 
 				})
+
+			},
+			exportar(){
+
+				this.title = "Exportar Datos"
+				this.width = '600'
+
+				this.$refs.modal_export.show()
 
 			}
 

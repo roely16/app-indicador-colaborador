@@ -5,7 +5,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    fecha: new Date().toISOString().substr(0, 7)
+    fecha: new Date().toISOString().substr(0, 7),
+    criterio: {}
   },
   mutations: {
 
@@ -13,6 +14,9 @@ export default new Vuex.Store({
       
       state.fecha = payload
 
+    },
+    setCriterio(state, payload){
+      state.criterio = payload
     }
 
   },
@@ -20,7 +24,8 @@ export default new Vuex.Store({
   },
   getters: {
 
-    getFecha: state => state.fecha
+    getFecha: state => state.fecha,
+    getCriterio: state => state.criterio
 
   }
 })

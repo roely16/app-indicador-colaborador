@@ -27,6 +27,8 @@
                         <v-row class="mt-4">
                             <v-col class="text-center" cols="12">
                                 <span class="text-h3">Indicadores de Estado de Desarrollo</span>
+                                <br>
+                                <span class="text-h5">{{ area.descripcion }}</span>
                             </v-col>
                         </v-row>
                         <v-row>
@@ -95,8 +97,35 @@
                 <v-card-text>
 
                     <v-row fill-height>
-                        <v-col cols="4" v-for="(integrante, key) in equipo" :key="key">
-                            <Individual v-if="integrante.nit" :nit="integrante.nit" ref="indicador"></Individual>
+                        <v-col cols="12" v-for="(integrante, key) in equipo" :key="key">
+                            <!-- <Individual v-if="integrante.nit" :nit="integrante.nit" ref="indicador"></Individual> -->
+                            
+
+                            <v-expansion-panels flat hover>
+                                <v-expansion-panel>
+                                    <v-expansion-panel-header>
+                                        <v-row dense>
+                                            <v-col cols="12">
+                                                <span class="overline">{{ integrante.descripcion }}</span>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                 <small>Asesor: {{ integrante.nombre }} {{ integrante.apellido }}</small>
+                                            </v-col>
+                                        </v-row>
+                                    </v-expansion-panel-header>
+                                    <v-expansion-panel-content>
+                                        
+                                        <v-row class="mt-2">
+                                            <v-col v-for="(item, key) in integrante.integrantes" :key="key" cols="4">
+                                                <Individual v-if="item.nit" :nit="item.nit"></Individual>
+                                            </v-col>
+                                        </v-row>
+
+                                    </v-expansion-panel-content>
+                                </v-expansion-panel>
+                            </v-expansion-panels>
+
+                            <v-divider></v-divider>
                         </v-col>
                     </v-row>
 
@@ -125,7 +154,9 @@
                 menu: false,
                 modal: false,
                 nit: null,
-                equipo: []
+                equipo: [],
+                area: {},
+                empleado: {}
             }
         },
         methods: {
@@ -152,7 +183,9 @@
                 request.post(data)
                 .then((response) => {
                     
-                    this.equipo = response.data
+                    this.equipo = response.data.equipo
+                    this.area = response.data.area
+                    this.empleado = response.data.empleado
 
                 })
 
