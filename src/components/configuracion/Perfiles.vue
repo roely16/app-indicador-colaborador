@@ -24,53 +24,13 @@
 
         <v-row class="mt-4">
             <v-col>
-                <v-data-table
-                    :headers="headers"
-                    :items="items"
-                    :items-per-page="5"
-                    hide-default-footer
-                    :page.sync="page"
-					@page-count="pageCount = $event"
-                    :search="busqueda"
-                >   
-
-                    <template slot="no-data">
-						
-						<Alert msg="No hay datos disponibles"></Alert>
-
-					</template>
-
-                    <template v-slot:[`item.action`]="{ item }">
-                        <v-btn @click="mostrar_editar(item)" x-small icon color="blue accent-4">
-                            <v-icon>
-                                mdi-pencil
-                            </v-icon>
-                        </v-btn>
-
-                        <v-btn @click="eliminar(item)" class="ml-2" x-small icon color="red accent-4">
-                            <v-icon>
-                                mdi-delete
-                            </v-icon>
-                        </v-btn>
-
-                    </template>
-
-                </v-data-table>
-
-                <v-pagination
-                    v-if="items.length > 0"
-					class="mt-4 mb-4"
-					v-model="page"
-					:length="pageCount"
-                    :total-visible="5"
-				></v-pagination>
-
+                <Agrupacion @showEdit="((value) => { mostrar_editar(value) })" @showDelete="(value) => { eliminar(value) }"></Agrupacion>
             </v-col>
         </v-row>
 
         <Modal :fullscreen="fullscreen" :title="title" ref="modal">
 			<template #form>
-				<Form :id_perfil="id_perfil" ref="form" @update="obtener_perfiles" @closeModal="close_modal"></Form>
+				<Form :id_perfil="id_perfil" ref="form" @closeModal="close_modal"></Form>
 			</template>
 		</Modal>
 
@@ -81,23 +41,25 @@
 
     import request from '@/functions/request'
 
-    import Alert from '@/components/AlertSeleccion'
+    //import Alert from '@/components/AlertSeleccion'
 
     import Modal from '@/components/Modal'
     import Form from '@/components/perfiles/Form'
 
     import sw_alert from '@/functions/alert'
 
+    import Agrupacion from '@/components/perfiles/Agrupacion'
+
     export default {
 
         components: {
-            Alert,
+            //Alert,
             Modal,
-            Form
+            Form,
+            Agrupacion
         },
         data(){
             return{
-                busqueda: null,
                 title: null,
                 width: null,
                 headers: [],
@@ -112,23 +74,6 @@
         },
         methods: {
 
-            obtener_perfiles(){
-
-                const data = {
-                    url: 'obtener_perfiles',
-                    data: null
-                }
-
-                request.post(data)
-                .then((response) => {
-                    console.log(response.data)
-
-                    this.headers = response.data.headers
-                    this.items = response.data.items
-
-                })
-
-            },
             mostrar_modal(){
 
                 this.title = "Generar Perfil"
@@ -145,15 +90,15 @@
                 this.$refs.modal.close()
 
             },
-            mostrar_editar(item){
+            mostrar_editar(id){
 
                 this.title = "Editar Perfil"
                 this.fullscreen = true
-                this.id_perfil = item.id
+                this.id_perfil = id
 				this.$refs.modal.show()
 
             },
-            eliminar(item){
+            eliminar(id){
 
                 const data = {
                     title: '¿Está seguro?',
@@ -171,7 +116,7 @@
                         const data = {
                             url: 'eliminar_perfil',
                             data: {
-                                id: item.id
+                                id: id
                             }
                         }
 
@@ -183,7 +128,7 @@
                                 sw_alert.show(response.data)
                                 .then(() => {
 
-                                    this.obtener_perfiles()
+                                    this.$store.dispatch('getAreas')
 
                                 })
 
@@ -198,12 +143,20 @@
             }
 
         },
-        mounted(){
+        computed: {
 
-            this.obtener_perfiles()
+            busqueda: {
+
+                get: function(){
+                    return this.$store.getters.getSearch
+                },
+                set: function(val){
+                    this.$store.dispatch('setSearch', val)
+                }
+
+            }
 
         }
-
     }
 </script>
 

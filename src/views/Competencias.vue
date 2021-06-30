@@ -70,6 +70,13 @@
 					</template>
 
 					<template v-slot:[`item.action`]="{ item }">
+
+						<v-btn @click="mostrar_seguimiento(item)" x-small icon class="mr-2" color="orange">
+							<v-icon>
+								mdi-clipboard-list
+							</v-icon>
+						</v-btn>
+
                         <v-btn :disabled="!admin"  @click="mostrar_editar(item)" x-small icon color="blue accent-4">
                             <v-icon>
                                 mdi-pencil
@@ -109,6 +116,12 @@
 			</template>
 		</Modal>
 
+		<!-- <Modal :fullscreen="fullscreen" :width="width" :title="title" ref="modal_seguimiento">
+			<template #form>
+				<Seguimiento></Seguimiento>
+			</template>
+		</Modal> -->
+
     </div>
 </template>
 
@@ -117,6 +130,7 @@
     import Modal from '@/components/Modal.vue'
 	import Form from '@/components/competencias/Form.vue'
 	import Conf from '@/components/competencias/Conf.vue'
+	// import Seguimiento from '@/components/competencias/Seguimiento.vue'
 
     import verificar_permisos from '@/functions/verificar_permisos'
 
@@ -130,7 +144,8 @@
             Alert,
             Modal,
             Form,
-			Conf
+			Conf,
+			// Seguimiento
         },
         data(){
 
@@ -262,6 +277,8 @@
 				this.id_colaborador = item.id_persona
 				this.id_area = item.codarea
 				this.secciones = false
+				
+				this.$store.commit('setEdit', true)
 
 				this.$refs.modal.show()
 
@@ -307,6 +324,24 @@
 
 				})
 
+
+			},
+			mostrar_seguimiento(item){
+
+				this.$store.commit('setIdEvaluacion', item.id)
+
+				this.title = "Seguimiento de Competencias"
+				this.width = "800"
+				this.fullscreen = true
+
+				this.id_evaluacion = item.id
+				this.id_colaborador = item.id_persona
+				this.id_area = item.codarea
+				this.secciones = false
+
+				this.$store.commit('setEdit', false)
+
+				this.$refs.modal.show()
 
 			}
 

@@ -307,8 +307,6 @@
             },
             agregar_colaborador(){
 
-                console.log(this.nit_colaborador);
-
                 // Validar que no exista el colaborador
                 let result = this.perfil.colaboradores.filter(colaborador => colaborador.nit == this.nit_colaborador)
 
@@ -323,19 +321,47 @@
 
                     request.post(data)
                     .then((response) => {
-                        console.log(response.data)
 
-                        this.perfil.colaboradores.push(response.data)
+                        // Validar si es edición o registro
+                        if (this.id_perfil) {
+                            
+                            const data_request = {
+                                url: 'agregar_colaborador_perfil',
+                                data: {
+                                    id_perfil: this.id_perfil,
+                                    nit: response.data.nit
+                                }
+                            }
+
+                            request.post(data_request)
+                            .then((response) => {
+
+                                if (response.data.status == 200) {
+                                    
+                                    this.obtener_detalle()
+                                    this.$store.dispatch('getAreas')
+
+                                }
+                            })
+
+                        }else{
+
+                            this.perfil.colaboradores.push(response.data)
+
+                        }
                     })
 
                 }else{
+                    
+                    const data = {
+                        title: 'Atención',
+                        message: 'Este colaborador ya fue agregado al perfil',
+                        type: 'info'
+                    }
 
-                    console.log('ya existe');
+                    sw_alert.show(data)
 
                 }
-
-
-                
 
             },
             registrar(){
@@ -355,6 +381,8 @@
 
                             this.$emit('update')
                             this.$emit('closeModal')
+
+                            this.$store.dispatch('getAreas')
 
                         })
 
@@ -377,13 +405,50 @@
             },
             eliminar_colaborador(key, colaborador){
 
-                if (!this.id_perfil || !colaborador.id_perfil) {
+                if (this.id_perfil && colaborador.id_perfil) {
                     
-                    this.perfil.colaboradores.splice(key, 1)
+                   const data = {
+                        title: '¿Está seguro?',
+                        message: "Una vez eliminado no se podrá recuperar!",
+                        type: 'warning',
+                        confirm_text: 'ELIMINAR',
+                        cancel_text: 'Cancelar'
+                    }
+
+                    sw_alert.show_confirm(data)
+                    .then((result) => {
+
+                        if (result.isConfirmed) {
+                            
+                            const data_request = {
+                                url: 'eliminar_colaborador_perfil',
+                                data: {
+                                    nit: colaborador.nit,
+                                    id_perfil: this.id_perfil
+                                }
+                            }
+
+                            request.post(data_request)
+                            .then((response) => {
+
+                                if (response.data.status == 200) {
+                                    
+                                    this.obtener_detalle()
+
+                                    this.$store.dispatch('getAreas')
+
+                                }
+                            })
+                        }
+                    })
 
                 }else{
 
-                    colaborador.delete = !colaborador.delete
+                    //colaborador.delete = !colaborador.delete
+
+                    console.log('eliminación directa')
+
+                    this.perfil.colaboradores.splice(key, 1)
 
                 }
                 
@@ -400,7 +465,6 @@
 
                 request.post(data)
                 .then((response) => {
-                    console.log(response.data)
 
                     this.perfil = response.data
 
@@ -424,6 +488,8 @@
 
                             this.$emit('update')
                             this.obtener_detalle()
+
+                            this.$store.dispatch('getAreas')
 
                         })
 

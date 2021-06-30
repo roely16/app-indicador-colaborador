@@ -96,7 +96,7 @@
 
                 <v-card-text>
 
-                    <v-row fill-height>
+                    <v-row v-if="equipo.length > 0" fill-height>
                         <v-col cols="12" v-for="(integrante, key) in equipo" :key="key">
                             <!-- <Individual v-if="integrante.nit" :nit="integrante.nit" ref="indicador"></Individual> -->
                             
@@ -109,13 +109,13 @@
                                                 <span class="overline">{{ integrante.descripcion }}</span>
                                             </v-col>
                                             <v-col cols="12">
-                                                 <small>Asesor: {{ integrante.nombre }} {{ integrante.apellido }}</small>
+                                                 <small>Asesor: {{ integrante.jefe ? integrante.jefe.nombre + ' ' + integrante.jefe.apellido : 'No Disponible' }}</small>
                                             </v-col>
                                         </v-row>
                                     </v-expansion-panel-header>
                                     <v-expansion-panel-content>
                                         
-                                        <v-row class="mt-2">
+                                        <v-row v-if="equipo.length > 0" class="mt-2">
                                             <v-col v-for="(item, key) in integrante.integrantes" :key="key" cols="4">
                                                 <Individual v-if="item.nit" :nit="item.nit"></Individual>
                                             </v-col>
@@ -168,7 +168,10 @@
             },
             reload(){
 
-                //this.$refs.indicador.obtener_datos()
+                this.equipo = []
+                this.obtener_equipo()
+
+                console.log('reload');
 
             },
             obtener_equipo(){
@@ -187,9 +190,34 @@
                     this.area = response.data.area
                     this.empleado = response.data.empleado
 
+                    //this.obtener_colaboradores()
+
                 })
 
-            }
+            },
+            obtener_colaboradores(){
+
+                this.equipo.forEach(equipo => {
+                    
+                    const data = {
+                        url: 'dashboard_area',
+                        data: {
+                            codarea: equipo.codarea,
+                            month: this.$store.getters.getFecha
+                        }
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+                        // this.colaboradores = response.data
+                        // this.loading = false
+                        console.log(response.data);
+                    })
+
+                });
+				
+
+			},
 
         },
         computed: {
