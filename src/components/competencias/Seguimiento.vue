@@ -3,9 +3,7 @@
         <v-row>
             <v-col>
                 <v-card outlined min-height="700">
-
                     <v-card-text>
-
                         <v-data-table single-expand show-expand hide-default-footer :items="items" :headers="headers">
 
                             <template v-slot:[`item.data-table-expand`]="{ item, expand, isExpanded }">
@@ -49,6 +47,9 @@
 
                                                 <v-card-text>
                                                     <v-row justify="end">
+                                                        <v-col v-if="admin">
+                                                            <v-btn class="elevation-0" @click="() => { show_verificar = !show_verificar }" x-small :color="show_verificar ? 'success' : null">VERIFICAR</v-btn>
+                                                        </v-col>
                                                         <v-col align="end" cols="4">
                                                             <v-btn @click="modal_actividad()" color="primary" icon small>
                                                                 <v-icon>
@@ -61,7 +62,10 @@
                                                 <v-card-text class="pt-0">
 
                                                     <v-row>
-                                                        <v-col cols="6">
+                                                        <v-col v-if="show_verificar" cols="1">
+                                                            
+                                                        </v-col>
+                                                        <v-col :cols="show_verificar ? 5 : 6">
                                                             <span class="overline">Actividad</span>
                                                         </v-col>
                                                         <v-col cols="2">
@@ -82,7 +86,12 @@
                                                 <v-card-text v-if="item.actividades.length > 0">
                                                     
                                                     <v-row v-for="(actividad, i) in item.actividades" :key="i">
-                                                        <v-col cols="6">
+                                                        <v-col align="center" v-if="show_verificar" cols="1">
+                                                            <v-btn :color="actividad.cumplio ? 'success' : null" @click="cumplimientoActividad(actividad)" x-small icon>
+                                                                <v-icon>mdi-check-circle</v-icon>
+                                                            </v-btn>
+                                                        </v-col>
+                                                        <v-col :cols="show_verificar ? 5 : 6">
                                                             {{ actividad.descripcion }}
                                                         </v-col>
                                                         <v-col cols="2">
@@ -97,7 +106,7 @@
                                                                     mdi-pencil
                                                                 </v-icon>
                                                             </v-btn>
-                                                            <v-btn @click="mostrar_eliminar(actividad)" color="error" icon x-small>
+                                                            <v-btn :disabled="!admin" @click="mostrar_eliminar(actividad)" color="error" icon x-small>
                                                                 <v-icon>
                                                                     mdi-delete
                                                                 </v-icon>
@@ -140,6 +149,8 @@
 
     import Alert from '@/components/AlertSeleccion.vue'
 
+    import { mapActions, mapState } from 'vuex'
+
     export default {
         components: {
             Modal,
@@ -149,21 +160,32 @@
         data(){
             return{
                 title: null,
-                width: null
+                width: null,
+                show_verificar: false
             }
         },
         computed: {
 
+            ...mapState([
+                'permisos'
+            ]), 
             items(){
                 return this.$store.getters.getItems
             },
             headers(){
                 return this.$store.getters.getHeaders
+            },
+            admin(){
+                return this.$store.getters.getAdmin
             }
 
         },
         methods: {
 
+            ...mapActions([
+				'verificar',
+                'cumplimientoActividad'
+			]),	
             modal_actividad(){
 
                 this.title = "Agregar Actividad"
@@ -193,6 +215,10 @@
 
         },
         mounted(){
+
+            const url = this.$route.name
+
+            this.verificar(url)
 
             this.$store.dispatch('getSeguimiento')
 

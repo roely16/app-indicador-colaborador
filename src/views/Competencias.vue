@@ -99,6 +99,7 @@
 					class="mt-4 mb-4"
 					v-model="page"
 					:length="pageCount"
+					:total-visible="7"
 				></v-pagination>
 			</v-card-text>
 
@@ -115,12 +116,6 @@
 				<Conf></Conf>
 			</template>
 		</Modal>
-
-		<!-- <Modal :fullscreen="fullscreen" :width="width" :title="title" ref="modal_seguimiento">
-			<template #form>
-				<Seguimiento></Seguimiento>
-			</template>
-		</Modal> -->
 
     </div>
 </template>
@@ -187,7 +182,6 @@
 
         },
         methods: {
-
             async verificar_permisos(){
 
 				const url = this.$route.name
@@ -346,7 +340,10 @@
 			}
 
         },
-        created(){
+		computed: {
+
+		},
+        mounted(){
 
             this.verificar_permisos()
 

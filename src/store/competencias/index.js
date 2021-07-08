@@ -316,6 +316,24 @@ const actions = {
             }
 
         })
+    },
+    cumplimientoActividad(state, payload){
+
+        const data = {
+            url: 'cumplimiento_actividad',
+            data: {
+                id: payload.id,
+                cumplio: !payload.cumplio ? 'S' : null
+            }
+        }
+
+        request.post(data)
+        .then((response) => {
+            console.log(response.data)
+
+            this.dispatch('getSeguimiento')
+        })
+
     }
 
 }

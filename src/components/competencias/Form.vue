@@ -13,7 +13,7 @@
                                     {{ edit ? 'mdi-pencil' : 'mdi-pencil-off' }}
                                 </v-icon>
                             </v-tab>
-                            <v-tab>Seguimiento 
+                            <v-tab v-if="!edit">Seguimiento
                                 <v-icon class="ml-2">
                                     mdi-clipboard-list
                                 </v-icon>
@@ -30,11 +30,15 @@
                                                     <Filtro :id_colaborador="id_colaborador" :disabled_seccion="!secciones_prop" 
                                                     :id_area="id_area" :disabled_colaborador="id_colaborador ? true : false" ref="filtro" @getCodarea="(value) => { codarea = value }" @getNit="(value) => { nit_colaborador = value }"></Filtro>
                                                     
-                                                    <v-row dense class="mt-2">
-                                                        <v-col>
-                                                            <v-text-field :disabled="!edit" readonly v-model="perfil" autocomplete="off" hide-details outlined single-line label="Perfil de Servicios"></v-text-field>
+                                                    <v-row v-if="perfiles.length > 0" dense class="mt-2">
+                                                        <v-col cols="6">
+                                                            <v-select v-if="!nombre_perfil" @change="obtener_detalle_perfil()" :disabled="id_evaluacion ? true : false" :items="perfiles" item-text="nombre" item-value="id" v-model="perfil" autocomplete="off" hide-details outlined single-line label="Perfil de Servicios"></v-select>
+                                                            
+                                                            <span class="overline">
+                                                                {{ nombre_perfil }}
+                                                            </span>
                                                         </v-col>
-                                                        <v-col>
+                                                        <v-col cols="6">
 
                                                             <v-menu
                                                                 ref="menu"
@@ -48,7 +52,7 @@
                                                             >
                                                                 <template v-slot:activator="{ on, attrs }">
                                                                     <v-text-field
-                                                                        :disabled="!edit"
+                                                                        :disabled="id_evaluacion ? true : false"
                                                                         v-model="date"
                                                                         label="Período de Evaluación"
                                                                         outlined
@@ -88,7 +92,7 @@
                                                     <!-- Posponer -->
                                                     <v-row v-if="nit_colaborador && perfil">
                                                         <v-col align="end">
-                                                            <v-btn :disabled="!edit" @click="posponer()" small color="warning">
+                                                            <v-btn :disabled="id_evaluacion ? true : false" @click="posponer()" small color="warning">
                                                                 POSPONER 
                                                                 <v-icon size="18" class="ml-1">
                                                                     mdi-clock
@@ -163,7 +167,7 @@
                                                             <v-btn @click="$emit('closeModal')" large dark>
                                                                 CANCELAR
                                                             </v-btn>
-                                                            <v-btn :disabled="!nit_colaborador || !perfil || !edit" type="submit" large color="primary" class="ml-2">
+                                                            <v-btn :disabled="!nit_colaborador || !perfil || !edit || !all_passed" type="submit" large color="primary" class="ml-2">
                                                                 REGISTRAR
                                                             </v-btn>
                                                         </v-col>
@@ -256,7 +260,7 @@
 
                                                 </v-card-text>
 
-                                                <v-card-text v-if="total <= 69">
+                                                <v-card-text v-if="total <= 69 && all_passed">
 
                                                     <v-row align="center" justify="center">
                                                         <v-col cols="4">
@@ -269,7 +273,6 @@
                                                         </v-col>
                                                     </v-row>
                                                     
-
                                                 </v-card-text>
 
                                             </v-card>
@@ -360,6 +363,7 @@
                 codarea: null,
                 id_colaborador: null,
                 secciones: null,
+                perfiles: [],
                 perfil: null,
                 tipos_competencias: [],
                 valid: false,
@@ -368,7 +372,8 @@
                 date: new Date().toISOString().substr(0, 7),
                 menu: false,
                 modal: false,
-                tab: 0
+                tab: 0,
+                nombre_perfil: null
             }
         },
         methods: {
@@ -385,18 +390,10 @@
                 request.post(data)
                 .then((response) => {
 
-                    if (response.data.perfil) {
-                        
-                        this.perfil = response.data.perfil.nombre
-
-                    }else{
-
-                        this.perfil = null
-
-                    }
+                    this.perfiles = response.data.perfil
+                    this.tipos_competencias = []
+                    this.perfil = null
                     
-                    this.tipos_competencias = response.data.tipos_competencias
-
                 })
 
             },
@@ -413,7 +410,8 @@
                             total: this.total,
                             nit_colaborador: this.nit_colaborador,
                             observaciones: this.observaciones,
-                            month: this.date
+                            month: this.date,
+                            id_perfil: this.perfil
                         }
                     }
 
@@ -455,8 +453,10 @@
                     this.total = response.data.calificacion
                     this.observaciones = response.data.observaciones
                     this.date = response.data.periodo
-                    this.perfil = response.data.perfil
                     this.tipos_competencias = response.data.tipos_competencias
+                    this.perfiles = response.data.perfiles
+                    this.perfil = response.data.perfil
+                    this.nombre_perfil = response.data.nombre_perfil
 
                 })
 
@@ -557,6 +557,24 @@
 
                 })
 
+            },
+            obtener_detalle_perfil(){
+
+                const data = {
+                    url: 'detalle_perfil_colaborador',
+                    data: {
+                        nit: this.nit_colaborador,
+                        id_perfil: this.perfil
+                    }
+                }
+
+                request.post(data)
+                .then((response) => {
+
+                    this.tipos_competencias = response.data
+
+                })
+
             }
 
         },
@@ -635,8 +653,22 @@
 
                 return this.$store.getters.getEdit
                 
-            }
+            },
+            all_passed(){
 
+                let pendientes = 0
+
+                this.tipos_competencias.forEach(tipo => {
+                    
+                    let result = tipo.competencias.filter( competencia => !competencia.resultado )
+
+                    pendientes += result.length
+
+                });
+
+                return pendientes > 0 ? false : true
+
+            },
         },
         created(){
 

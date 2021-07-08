@@ -5,11 +5,13 @@ Vue.use(Vuex)
 
 import competencias from './competencias/index.js'
 import perfiles from './perfiles/index.js'
+import permisos from './permisos/index.js'
 
 export default new Vuex.Store({
 	modules: {
 		competencias: competencias,
-		perfiles: perfiles
+		perfiles: perfiles,
+		permisos: permisos
 	},
 	state: {
 		fecha: new Date().toISOString().substr(0, 7),

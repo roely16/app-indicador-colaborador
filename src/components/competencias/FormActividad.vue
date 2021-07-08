@@ -6,7 +6,7 @@
                     <v-col cols="5">
                         <v-row>
                             <v-col cols="12">
-                                <v-textarea :rules="[v => !!v]" v-model="actividad.descripcion" rows="3" outlined hide-details label="Descripción"></v-textarea>
+                                <v-textarea :disabled="!admin && isEdit" :rules="[v => !!v]" v-model="actividad.descripcion" rows="3" outlined hide-details label="Descripción"></v-textarea>
                             </v-col>
                             <v-col cols="6">
                                 <v-menu
@@ -29,6 +29,7 @@
                                             outlined
                                             hide-details
                                             :rules="[v => !!v]"
+                                            :disabled="!admin && isEdit"
                                         ></v-text-field>
                                     </template>
                                     <v-date-picker  v-model="date" no-title scrollable>
@@ -63,6 +64,7 @@
                                             outlined
                                             hide-details
                                             :rules="[v => !!v]"
+                                            :disabled="!admin && isEdit"
                                         ></v-text-field>
                                     </template>
                                     <v-date-picker  v-model="date2" no-title scrollable>
@@ -77,7 +79,7 @@
                                 </v-menu>
                             </v-col>
                             <v-col cols="12">
-                                <v-textarea  v-model="actividad.observaciones" rows="5" outlined hide-details label="Observaciones"></v-textarea>
+                                <v-textarea :disabled="!admin && isEdit" v-model="actividad.observaciones" rows="5" outlined hide-details label="Observaciones"></v-textarea>
                             </v-col>
                         </v-row>
                     </v-col>
@@ -171,6 +173,8 @@
 
     import Alert from '@/components/AlertSeleccion'
 
+    import { mapActions, mapState } from 'vuex'
+
     export default {
         components: {
             Alert
@@ -196,7 +200,9 @@
             }
         },
         methods: {
-
+            ...mapActions([
+                'verificar'
+            ]),
             registrar(){
 
                 this.$refs.form.validate()
@@ -250,7 +256,9 @@
 
         },
         computed: {
-            
+            ...mapState([
+                'permisos'
+            ]),
             actividad(){
 
                 return this.$store.getters.getActividad
@@ -260,8 +268,26 @@
 
                 return this.$store.getters.getArchivosSeleccionados
 
+            },
+            admin(){
+                return this.$store.getters.getAdmin
+            },
+            isEdit(){
+
+                if(this.actividad.id){
+                    return true
+                }
+
+                return false
+
             }
-            
+        },
+        mounted(){
+
+            const url = this.$route.name
+
+            this.verificar(url)
+
         }
     }
 </script>

@@ -12,7 +12,7 @@
                             <div class="d-flex flex-no-wrap justify-space-between">
                                 <div>
                                     <v-card-title
-                                        class="overline pb-0"
+                                        class="text-subtitle-2 text-uppercase pb-0"
                                         v-text="item.nombre"
                                     ></v-card-title>
                                     <v-divider class="mt-0 pt-0" dark></v-divider>

@@ -2,7 +2,7 @@
     <div>
         <v-container>
     
-            <v-card class="mb-4" v-if="show_form">
+            <v-card class="mb-4" elevation="1" v-if="show_form">
                 <v-card-text>
                     <v-form @submit.prevent="!periodo.id ? registrar() : editar()" ref="form" v-model="valid">
                         <v-row>
@@ -107,20 +107,32 @@
                                 </v-menu>
                             </v-col>
                         </v-row>
-                        <v-row class="mb-4" align="center" justify="center">
+                        <v-row align="center" justify="center">
                             <v-col align="center">
-                                <v-btn @click="show_form = false" large dark>
+                                <v-btn class="elevation-0" @click="show_form = false">
                                     CANCELAR 
-                                    <v-icon>
+                                    <v-icon class="ml-1">
                                         mdi-close-circle
                                     </v-icon>
                                 </v-btn>
-                                <v-btn :loading="saving" :disabled="saving" type="submit" large color="primary" class="ml-2">
+                                <v-btn :loading="saving" :disabled="saving" type="submit" color="primary" class="ml-2 elevation-0">
                                     {{ !periodo.id ? 'REGISTRAR' : 'ACTUALIZAR' }} 
-                                    <v-icon>
+                                    <v-icon class="ml-1">
                                         mdi-content-save
                                     </v-icon>
                                 </v-btn>
+                            </v-col>
+                        </v-row>
+
+                        <v-row class="mt-0 pt-0">
+                            <v-col cols="6">
+                                <v-checkbox v-model="periodo.notificar" hide-details>
+                                    <template v-slot:label>
+                                        <span class="overline">
+                                            Notificar a los asesores
+                                        </span>
+                                    </template>
+                                </v-checkbox>
                             </v-col>
                         </v-row>
                     </v-form>
@@ -137,6 +149,7 @@
                         hide-details
                         outlined
                         autocomplete="off"
+                        dense
                     ></v-text-field>
                 </v-col>
                 <v-col align="end">
@@ -210,7 +223,8 @@
                 periodo: {
                     observacion: null,
                     fecha_inicio: new Date().toISOString().substr(0, 10),
-                    fecha_fin: new Date().toISOString().substr(0, 10)
+                    fecha_fin: new Date().toISOString().substr(0, 10),
+                    notificar: false
                 },
                 valid: true,
                 page: 1,

@@ -12,7 +12,7 @@
 
 			<v-row align="center">
 				<v-col class="text-center">
-					<v-btn type="submit" large color="teal" dark>
+					<v-btn :disabled="loading" :loading="loading" type="submit" large color="teal" :dark="!loading">
 						INGRESAR 
 						<v-icon>
 							mdi-login
@@ -36,7 +36,8 @@
 				usuario: {
 					usuario: null,
 					pass: null
-				}
+				},
+				loading: false
 			}
 		},
 		methods: {
@@ -46,6 +47,9 @@
 
 				if (this.valid) {
 					
+					this.loading = true
+
+					
 					const data = {
 						url: 'login',
 						data: this.usuario
@@ -53,8 +57,6 @@
 
 					request.post(data)
 					.then((response) => {
-
-						console.log(response.data)
 
 						if (response.data.status != 200) {
 							
@@ -77,7 +79,10 @@
 							this.$router.push({name: 'home'})
 
 						}
+
+						this.loading = false
 					})
+					
 
 				}
 
