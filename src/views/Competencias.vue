@@ -274,6 +274,8 @@
 				
 				this.$store.commit('setEdit', true)
 
+				this.$store.dispatch('getSeguimiento')
+				
 				this.$refs.modal.show()
 
 			},
@@ -334,6 +336,8 @@
 				this.secciones = false
 
 				this.$store.commit('setEdit', false)
+
+				this.$store.dispatch('getSeguimiento')
 
 				this.$refs.modal.show()
 
