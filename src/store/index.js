@@ -6,6 +6,7 @@ Vue.use(Vuex)
 import competencias from './competencias/index.js'
 import perfiles from './perfiles/index.js'
 import permisos from './permisos/index.js'
+import notificaciones from './notificaciones/index'
 
 export default new Vuex.Store({
 	modules: {
