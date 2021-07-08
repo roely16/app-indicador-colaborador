@@ -11,7 +11,8 @@ export default new Vuex.Store({
 	modules: {
 		competencias: competencias,
 		perfiles: perfiles,
-		permisos: permisos
+		permisos: permisos,
+		notificaciones: notificaciones
 	},
 	state: {
 		fecha: new Date().toISOString().substr(0, 7),
