@@ -108,8 +108,16 @@
 					</v-col>
 					
 				</v-row>
-				<v-divider class="mt-4"></v-divider>
+				<v-divider class="mt-4 mb-0 pb-0"></v-divider>
 				<v-progress-linear indeterminate color="green" v-if="loading"></v-progress-linear>
+			</v-card-text>
+
+			<v-card-text class="mt-0 pt-0 text-right">
+				<v-btn :disabled="!this.colaboradores.length > 0" icon @click="exportar()">
+					<v-icon>
+						mdi-cloud-download
+					</v-icon>
+				</v-btn>
 			</v-card-text>
 
             <v-card-text v-if="mode == 0">
@@ -264,6 +272,32 @@
 				})
 
 			},
+			exportar(){
+
+				const data = {
+					url: 'export_dashboard',
+					data: {
+						codarea: this.codarea,
+						month: this.date
+					},
+					headers: {
+						responseType: 'blob'
+					}
+				}
+
+				request.post(data)
+				.then((response) => {
+
+					const url = window.URL.createObjectURL(new Blob([response.data]));
+					const link = document.createElement('a');
+					link.href = url;
+					link.setAttribute('download', 'dashboard.xlsx');
+					document.body.appendChild(link);
+					link.click();
+
+				})
+
+			}
 
         },
 		watch: {
