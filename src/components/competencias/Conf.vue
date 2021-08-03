@@ -124,17 +124,6 @@
                             </v-col>
                         </v-row>
 
-                        <v-row class="mt-0 pt-0">
-                            <v-col cols="6">
-                                <v-checkbox v-model="periodo.notificar" hide-details>
-                                    <template v-slot:label>
-                                        <span class="overline">
-                                            Notificar a los asesores
-                                        </span>
-                                    </template>
-                                </v-checkbox>
-                            </v-col>
-                        </v-row>
                     </v-form>
                 </v-card-text>
             </v-card>
@@ -172,7 +161,86 @@
                         hide-default-footer
                         :page.sync="page"
                         @page-count="pageCount = $event"
-                    >
+                        show-expand
+                        :loading="loading"
+                    >   
+
+                        <template v-slot:expanded-item="{ headers, item }">
+                            <td :colspan="headers.length">
+                                <v-row class="pt-4 pb-4">
+                                    <v-col cols="4">
+                                        <v-card @click="() => { 
+                                            item.filtro = 'PE' 
+                                        }" dark :color="'primary'" :elevation="item.filtro == 'PE' ? 12 : 0">
+                                            <v-card-text>
+                                                <v-row align="center">
+                                                    <v-col cols="3">
+                                                        <v-btn dark icon>
+                                                            <v-icon size="40">
+                                                                mdi-account-clock
+                                                            </v-icon>
+                                                        </v-btn>
+                                                    </v-col>
+                                                    <v-col justify="center" class="text-center">
+                                                        <small small label>
+                                                            Pendientes
+                                                        </small>
+                                                        <br>
+                                                        <span label class="text-h4 pt-4 pb-4">
+                                                            {{ item.pendientes }}
+                                                        </span>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
+                                    <v-col cols="4">
+                                        <v-card @click="() => { 
+                                            item.filtro = 'PO' 
+                                        }" dark :color="'warning'" :elevation="item.filtro == 'PO' ? 12 : 0">
+                                            <v-card-text>
+                                                <v-row align="center">
+                                                    <v-col cols="3">
+                                                        <v-btn dark icon>
+                                                            <v-icon size="40">
+                                                                mdi-alarm
+                                                            </v-icon>
+                                                        </v-btn>
+                                                    </v-col>
+                                                    <v-col justify="center" class="text-center">
+                                                        <small small label>
+                                                            Pospuestos
+                                                        </small>
+                                                        <br>
+                                                        <span label class="text-h4 pt-4 pb-4">
+                                                            {{ item.posponer }}
+                                                        </span>
+                                                    </v-col>
+                                                </v-row>
+                                            </v-card-text>
+                                        </v-card>
+                                    </v-col>
+                                </v-row>
+
+                                <v-row class="mb-4">
+                                    <v-col>
+                                        <v-expansion-panels class="elevation-0">
+                                            <v-expansion-panel class="elevation-0" v-for="(area, key) in item.filtro == 'PE' ? item.areas : item.areas_posponer" :key="key">
+                                                <v-expansion-panel-header>
+                                                    {{ area.descripcion }}
+                                                </v-expansion-panel-header>
+                                                <v-expansion-panel-content>
+                                                    <h5 v-for="(empleado, i) in area.empleados" :key="i">
+                                                        {{ empleado.nombre }} {{ empleado.apellido }}
+                                                    </h5>
+                                                </v-expansion-panel-content>
+                                            </v-expansion-panel>
+                                        </v-expansion-panels>
+                                    </v-col>
+                                </v-row>
+                            </td>
+                        </template>
+
                         <template v-slot:[`item.no`]="{item}">
                             {{ item.index }}
                         </template>
@@ -229,12 +297,15 @@
                 valid: true,
                 page: 1,
 				pageCount: 0,
-                saving: false
+                saving: false,
+                loading: false
             }
         },
         methods: {
 
             obtener_periodos(){
+
+                this.loading = true
 
                 const data = {
                     url: 'obtener_periodos',
@@ -244,9 +315,9 @@
                 request.post(data)
                 .then((response) => {
 
-                    console.log(response.data)
                     this.items = response.data.items
                     this.headers = response.data.headers
+                    this.loading = false
 
                 })
 
@@ -373,6 +444,11 @@
                     })
 
                 }
+
+            },
+            filtro_periodo(){
+
+
 
             }
 

@@ -23,18 +23,33 @@
 							hide-details
 							@change="obtener_colaboradores()"
 							:disabled="disabled_areas"
-						></v-autocomplete>
+							multiple
+						>
+							<template v-slot:selection="{ item, index }">
+								<v-chip v-if="index === 0">
+								<span>{{ item.descripcion }}</span>
+								</v-chip>
+								<span
+								v-if="index === 1"
+								class="grey--text text-caption"
+								>
+								(+{{ codarea.length - 1 }})
+								</span>
+							</template>
+						</v-autocomplete>
                     </v-col>
 				</v-row>
-				<v-row dense>
+				<v-row align="center" dense>
 					<v-col>
-						<v-progress-circular
-							indeterminate
-							color="success"
-							size="20"
-							width="1"
-							v-if="loading"
-						></v-progress-circular>
+						<v-btn-toggle v-model="mode">
+							<v-btn>
+								<v-icon>mdi-view-grid</v-icon>
+							</v-btn>
+
+							<v-btn>
+								<v-icon>mdi-view-list</v-icon>
+							</v-btn>
+						</v-btn-toggle>
 					</v-col>
 					<v-col cols="6" align="end">
 						<v-chip label color="success">
@@ -94,18 +109,37 @@
 					
 				</v-row>
 				<v-divider class="mt-4"></v-divider>
+				<v-progress-linear indeterminate color="green" v-if="loading"></v-progress-linear>
 			</v-card-text>
 
-            <v-card-text>
-
-				<v-row align="center" class="mb-2">
-					<v-col md="4" v-for="(colaborador, key) in colaboradores" :key="key">
-						<Indicador :colaborador="colaborador"></Indicador>
+            <v-card-text v-if="mode == 0">
+				<v-row align="center">
+					<v-col cols="12">
+						<v-expansion-panels>
+							<v-expansion-panel v-for="(area, i) in colaboradores" :key="i">
+								<v-expansion-panel-header>
+									<span class="overline text-h6">
+										{{ area.descripcion }}
+									</span>
+								</v-expansion-panel-header>
+								<v-expansion-panel-content>
+									<v-row class="mt-4">
+										<v-col md="4" v-for="(colaborador, key) in area.empleados" :key="key">
+											<Indicador :colaborador="colaborador"></Indicador>
+										</v-col>
+									</v-row>
+								</v-expansion-panel-content>
+							</v-expansion-panel>
+						</v-expansion-panels>
 					</v-col>
                 </v-row>
             </v-card-text>
 
-			<v-card-text v-if="!codarea">
+			<v-card-text v-if="mode == 1">
+				<ListView></ListView>
+			</v-card-text>
+
+			<v-card-text v-if="codarea.length <= 0">
 				<AlertSeleccion msg="Debe de seleccionar primero una sección"></AlertSeleccion>
 			</v-card-text>
         </v-card>
@@ -122,11 +156,16 @@
 
 	import verificar_permisos from '@/functions/verificar_permisos'
 
+	import ListView from '@/components/dashboard/ListView'
+	
+	import { mapMutations } from 'vuex'
+
     export default {
        
        components: {
            Indicador,
-			AlertSeleccion
+			AlertSeleccion,
+			ListView
        },
         data(){
             return{
@@ -143,18 +182,22 @@
 						href: 'breadcrumbs_link_1',
 					},
 				],
-                codarea: null,
+                codarea: [],
                 areas: [],
                 colaboradores: [],
 				loading: false,
 				date: new Date().toISOString().substr(0, 7),
                 menu: false,
                 modal: false,
-				disabled_areas: false
+				disabled_areas: false,
+				mode: 0
             }
         },
         methods: {
 
+			...mapMutations('dashboard', [
+				'setDashboard'
+			]),
             obtener_areas(){
 
 				const route = this.$route.name
@@ -189,8 +232,11 @@
 
 				request.post(data)
 				.then((response) => {
+
 					this.colaboradores = response.data
 					this.loading = false
+					this.setDashboard(this.colaboradores)
+
 				})
 
 			},
@@ -231,16 +277,6 @@
 				}
 
 			},
-			// date: function(val){
-
-			// 	if (val) {
-					
-			// 		this.obtener_colaboradores()
-					
-			// 	}
-
-			// }
-
 		},
         mounted(){
 

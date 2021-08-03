@@ -1,105 +1,77 @@
 <template>
     <div>
-        <v-card min-height="200" max-height="300" min-width="500" max-width="500">
+        <v-card min-width="400" max-width="400">
             <v-card-text>
-                <span class="overline">
-                    Notificaciones
-                </span>
+
+                <v-row>
+                    <v-col>
+                        <span class="overline">
+                            Notificaciones
+                        </span>
+                    </v-col>
+                    <v-col align="right">
+                        <v-progress-circular v-if="loading" indeterminate color="grey lighten-1"></v-progress-circular>
+                    </v-col>
+                </v-row>
+                
             </v-card-text>
 
-            <v-card-text class="pl-0 pr-0 pt-0 pb-0">
-                <v-list two-line>
-                    <v-list-item-group
-                        v-model="selected"
-                        active-class="green--text"
-                    >
-                        <template v-for="(item, index) in items">
-                            <v-list-item :key="item.title">
-                                <template v-slot:default="{ active }">
-                                <v-list-item-content>
-                                    <v-list-item-title v-text="item.title"></v-list-item-title>
+            <v-card-text v-if="items.length > 0" class="pl-0 pr-0 pt-0 pb-0 text-center">
+                <v-virtual-scroll
+                    height="300"
+                    item-height="120"
+                    :items="items"
+                    :bench="benched"
+                    v-if="items.length > 0"
+                >
+                    <template v-slot:default="{ item, index }">
+                        <Notificacion :index="index" :item="item" :title="item.title" :subtitle="item.subtitle"></Notificacion>
+                    </template>
+                </v-virtual-scroll>
 
-                                    <v-list-item-subtitle
-                                    class="text--primary"
-                                    v-text="item.headline"
-                                    ></v-list-item-subtitle>
+            </v-card-text>
 
-                                    <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
-                                </v-list-item-content>
-
-                                <v-list-item-action>
-                                    <v-list-item-action-text v-text="item.action"></v-list-item-action-text>
-
-                                    <v-icon
-                                    v-if="!active"
-                                    color="grey lighten-1"
-                                    >
-                                    mdi-star-outline
-                                    </v-icon>
-
-                                    <v-icon
-                                    v-else
-                                    color="yellow darken-3"
-                                    >
-                                    mdi-star
-                                    </v-icon>
-                                </v-list-item-action>
-                                </template>
-                            </v-list-item>
-
-                            <v-divider
-                                v-if="index < items.length - 1"
-                                :key="index"
-                            ></v-divider>
-                        </template>
-                    </v-list-item-group>
-                </v-list>
+            <v-card-text v-if="items.length <= 0">
+                <v-row justify="center">
+                    <v-col cols="6">
+                        <v-img max-width="200" :src="require('@/assets/img/folder.png')"></v-img>
+                    </v-col>
+                    <v-col class="text-center" cols="12">
+                        <span class="overline">Sin notificaciones pendientes</span>
+                    </v-col>
+                </v-row>
             </v-card-text>
         </v-card>
     </div>
 </template>
 
 <script>
+
+    import Notificacion from '@/components/notificaciones/Notificacion'
+    import { mapState } from 'vuex'
+
     export default {
+        components: {
+            Notificacion
+        },
         data(){
             return{
-
+                benched: 0,
                 selected: [2],
-                items: [
-                    {
-                    action: '15 min',
-                    headline: 'Brunch this weekend?',
-                    subtitle: `I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
-                    title: 'Ali Connors',
-                    },
-                    {
-                    action: '2 hr',
-                    headline: 'Summer BBQ',
-                    subtitle: `Wish I could come, but I'm out of town this weekend.`,
-                    title: 'me, Scrott, Jennifer',
-                    },
-                    {
-                    action: '6 hr',
-                    headline: 'Oui oui',
-                    subtitle: 'Do you have Paris recommendations? Have you ever been?',
-                    title: 'Sandra Adams',
-                    },
-                    {
-                    action: '12 hr',
-                    headline: 'Birthday gift',
-                    subtitle: 'Have any ideas about what we should get Heidi for her birthday?',
-                    title: 'Trevor Hansen',
-                    },
-                    {
-                    action: '18hr',
-                    headline: 'Recipe to try',
-                    subtitle: 'We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-                    title: 'Britta Holt',
-                    },
-                ],
-
             }
-        }
+        },
+        methods: {
+
+        },
+        computed: {
+
+            ...mapState('notificaciones', {
+                items: 'notificaciones',
+                loading: 'loading'
+            })
+
+        },
+        
     }
 </script>
 

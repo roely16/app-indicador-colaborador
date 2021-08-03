@@ -7,13 +7,15 @@ import competencias from './competencias/index.js'
 import perfiles from './perfiles/index.js'
 import permisos from './permisos/index.js'
 import notificaciones from './notificaciones/index'
+import dashboard from './dashboard/index'
 
 export default new Vuex.Store({
 	modules: {
 		competencias: competencias,
 		perfiles: perfiles,
 		permisos: permisos,
-		notificaciones: notificaciones
+		notificaciones: notificaciones,
+		dashboard: dashboard
 	},
 	state: {
 		fecha: new Date().toISOString().substr(0, 7),

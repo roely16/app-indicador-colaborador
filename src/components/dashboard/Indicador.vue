@@ -4,7 +4,7 @@
             <v-card-text>
                 <v-row style="height: 80px" align="start">
                     <v-col cols="9">
-                        <h3>ESTADO DE DESARROLLO</h3>
+                        <h4>ESTADO DE DESARROLLO</h4>
                         <h5>NOMBRE: {{ colaborador.nombre }} {{ colaborador.apellido }}</h5>
                     </v-col>
                     <v-col>

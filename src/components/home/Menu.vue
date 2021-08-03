@@ -35,6 +35,7 @@
                                 icon
                                 v-bind="attrs"
                                 v-on="on"
+                                @click="() => { getNotificaciones() }"
                             >
                                 <v-icon>
                                     mdi-bell
@@ -58,9 +59,12 @@
                     <div class="d-flex flex-no-wrap justify-space-between">
                         <div>
                             <v-card-title
-                                class="headline"
-                                v-text="item.nombre"
-                            ></v-card-title>
+                                class="headline mt-2">   
+                                <v-badge color="warning" :value="false" content="!">
+                                    {{ item.nombre }}
+                                </v-badge>
+                                
+                            </v-card-title>
 
                             <v-card-subtitle v-text="item.artist"></v-card-subtitle>
 
@@ -106,6 +110,7 @@
     import Alert from '@/components/AlertSeleccion'
 
     import Notificaciones from '@/components/home/Notificaciones'
+    import { mapActions } from 'vuex'
 
     export default {
         components: {
@@ -120,7 +125,9 @@
             }
         },
         methods: {
-
+            ...mapActions('notificaciones', [
+                'getNotificaciones'
+            ]),
             obtener_menu(){
 
                 const usuario = JSON.parse(localStorage.getItem('app-estado-desarrollo'))
