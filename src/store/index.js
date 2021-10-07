@@ -8,6 +8,8 @@ import perfiles from './perfiles/index.js'
 import permisos from './permisos/index.js'
 import notificaciones from './notificaciones/index'
 import dashboard from './dashboard/index'
+import filtro from './filtro/index'
+import sgs from './sgs/index'
 
 export default new Vuex.Store({
 	modules: {
@@ -15,7 +17,9 @@ export default new Vuex.Store({
 		perfiles: perfiles,
 		permisos: permisos,
 		notificaciones: notificaciones,
-		dashboard: dashboard
+		dashboard: dashboard,
+		filtro: filtro,
+		sgs: sgs
 	},
 	state: {
 		fecha: new Date().toISOString().substr(0, 7),

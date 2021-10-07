@@ -12,6 +12,7 @@ import Convivencia from '../views/Convivencia.vue'
 import SSO from '../views/SSO.vue'
 import Performance from '../views/Performance'
 import Competencias from '../views/Competencias.vue'
+import SGS from '../views/SGS.vue'
 
 import Dashboard from '../views/Dashboard'
 import Configuracion from '../views/Configuracion'
@@ -91,6 +92,11 @@ const routes = [
 				path: '/home/configuracion',
 				name: 'configuracion',
 				component: Configuracion
+			},
+			{
+				path: '/home/sgs',
+				name: 'sgs',
+				component: SGS
 			},
 			{
 				path: '/home/test_individual',

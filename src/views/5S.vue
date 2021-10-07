@@ -38,6 +38,11 @@
 							autocomplete="off"
 						></v-text-field>
 					</v-col>
+
+					<v-col cols="6">
+						<Filtro />
+					</v-col>
+
 					<v-col align="end">
 						<v-btn :disabled="!escritura" color="teal darken-1" elevation="2" @click="mostrar_modal()" dark fab>
 							<v-icon>
@@ -130,12 +135,17 @@
 
 	import sw_alert from '@/functions/alert'
 
+	import Filtro from '@/components/home/Filtro.vue'
+
+	import { mapState } from 'vuex'
+
 	export default {
 		components: {
 			Modal,
 			Form,
 			Alert,
-			Exportar
+			Exportar,
+			Filtro
 		},
 		data(){
 			return{
@@ -238,7 +248,9 @@
 					data: {
 						url: url,
 						nit: usuario.nit,
-						codarea: usuario.codarea
+						codarea: usuario.codarea,
+						areas: this.areas_select,
+						date: this.date
 					}
 				}
 
@@ -334,6 +346,22 @@
 
 			}
 
+		},
+		computed: {
+
+			...mapState('filtro', {
+				areas_select: state => state.areas_select,
+				date: state => state.date
+			})
+
+		},
+		watch: {
+			date: function(){
+				this.obtener_reportes()
+			},
+			areas_select: function(){
+				this.obtener_reportes()
+			}
 		},
 		mounted(){
 

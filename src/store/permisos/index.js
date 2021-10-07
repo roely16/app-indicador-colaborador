@@ -1,6 +1,8 @@
 
 import verificar_permisos from '@/functions/verificar_permisos'
 
+const namespaced = true
+
 const state = {
     permisos: {}
 }
@@ -13,11 +15,11 @@ const mutations = {
 
 const actions = {
     
-    verificar(state, payload){
+    verificar({commit}, payload){
 
         verificar_permisos.check(payload)
         .then((response) => {
-            this.commit('setPermisos', response.data)
+            commit('setPermisos', response.data)
         })
 
     }
@@ -29,6 +31,7 @@ const getters = {
 }
 
 export default {
+    namespaced,
     state,
     mutations,
     actions,

@@ -132,8 +132,8 @@
                                     <v-card-text v-if="item.show_description" >
                                         
                                         <v-row align="center">
-                                            <v-col cols="8">
-                                                <v-textarea hide-details label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
+                                            <v-col cols="12">
+                                                <v-textarea counter label="Observaciones" single-line v-model="item.comentario" outlined :rows="3" hint="Máximo 500 caracteres" persistent-hint></v-textarea>
                                             </v-col>
                                             
                                             <v-col cols="3" v-if="item.data_calculo">
