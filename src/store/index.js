@@ -10,6 +10,8 @@ import notificaciones from './notificaciones/index'
 import dashboard from './dashboard/index'
 import filtro from './filtro/index'
 import sgs from './sgs/index'
+import evaluacion_sgs from './sgs/evaluacion'
+import detalle_evaluacion_sgs  from './sgs/detalle_evaluacion'
 
 export default new Vuex.Store({
 	modules: {
@@ -19,7 +21,9 @@ export default new Vuex.Store({
 		notificaciones: notificaciones,
 		dashboard: dashboard,
 		filtro: filtro,
-		sgs: sgs
+		sgs: sgs,
+		evaluacion_sgs: evaluacion_sgs,
+		detalle_evaluacion_sgs: detalle_evaluacion_sgs
 	},
 	state: {
 		fecha: new Date().toISOString().substr(0, 7),

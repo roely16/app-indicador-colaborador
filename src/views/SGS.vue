@@ -11,15 +11,15 @@
                     background-color="teal darken-1"
                     v-model="tab"
                 >
-                    <v-tab>Actividades</v-tab>
-                    <v-tab>Evaluaciones</v-tab>                    
+                    <v-tab>Evaluaciones</v-tab>
+                    <v-tab>Actividades</v-tab>                    
                 </v-tabs>
                 <v-tabs-items v-model="tab">
                     <v-tab-item :key="0">
-                        <Actividades />
+                        <Evaluaciones />                       
                     </v-tab-item>
                     <v-tab-item :key="1">
-                        <Evaluaciones />
+                         <Actividades />
                     </v-tab-item>
                 </v-tabs-items>
             </v-card-text>
