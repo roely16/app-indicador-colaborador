@@ -114,6 +114,8 @@
 
     import request from '@/functions/request'
 
+    import { mapActions } from 'vuex'
+
     export default {
         props: {
             nit: String
@@ -126,23 +128,30 @@
             }
         },
         methods: {
-
+            ...mapActions('dashboard', [
+                'updateDashboard'
+            ]),
             obtener_datos(){
 
                 this.isLoading = true
 
-                const data = {
-                    url: 'indicador_individual',
-                    data: {
-                        nit: this.nit,
-                        fecha: this.$store.getters.getFecha
-                    }
-                }
+                this.updateDashboard({date: this.$store.getters.getFecha, nit: this.nit})
+				.then(() => {
 
-                request.post(data)
-                .then((response) => {
-                    this.colaborador = response.data
-                    this.isLoading = false
+                    const data = {
+                        url: 'indicador_individual',
+                        data: {
+                            nit: this.nit,
+                            fecha: this.$store.getters.getFecha
+                        }
+                    }
+
+                    request.post(data)
+                    .then((response) => {
+                        this.colaborador = response.data
+                        this.isLoading = false
+                    })
+
                 })
 
             }

@@ -166,7 +166,7 @@
 
 	import ListView from '@/components/dashboard/ListView'
 	
-	import { mapMutations } from 'vuex'
+	import { mapMutations, mapActions } from 'vuex'
 
     export default {
        
@@ -206,6 +206,9 @@
 			...mapMutations('dashboard', [
 				'setDashboard'
 			]),
+			...mapActions('dashboard', [
+				'updateDashboard'
+			]),
             obtener_areas(){
 
 				const route = this.$route.name
@@ -230,20 +233,25 @@
 
 				this.loading = true
 
-				const data = {
-					url: 'dashboard_area',
-					data: {
-						codarea: this.codarea,
-						month: this.date
+				this.updateDashboard({date: this.date, codarea: this.codarea})
+				.then(() => {
+
+					const data = {
+						url: 'dashboard_area',
+						data: {
+							codarea: this.codarea,
+							month: this.date
+						}
 					}
-				}
 
-				request.post(data)
-				.then((response) => {
+					request.post(data)
+					.then((response) => {
 
-					this.colaboradores = response.data
-					this.loading = false
-					this.setDashboard(this.colaboradores)
+						this.colaboradores = response.data
+						this.loading = false
+						this.setDashboard(this.colaboradores)
+
+					})
 
 				})
 
