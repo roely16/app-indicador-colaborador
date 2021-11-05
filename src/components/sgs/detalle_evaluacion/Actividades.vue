@@ -7,6 +7,11 @@
                         Actividades
                     </v-col>
                     <v-col align="end">
+                        <v-btn :disabled="!actividad_select" @click="eliminar_actividad()" icon color="error">
+                            <v-icon>
+                                mdi-delete
+                            </v-icon>
+                        </v-btn>
                         <v-btn @click="mostrar_modal" color="primary" icon>
                             <v-icon>mdi-plus</v-icon>
                         </v-btn>
@@ -23,7 +28,10 @@
 
                        <v-row align="center">
                             <v-col cols="4">
-                                <v-text-field autocomplete="off" type="number" @change="actualizar_porcentaje(actividad)" v-model="actividad.porcentaje" outlined dense hide-details label="Porcentaje"></v-text-field>
+                                <v-text-field autocomplete="off" type="number" @change="actualizar_porcentaje(actividad)" v-model="actividad.porcentaje" outlined dense hide-details label="%"></v-text-field>
+                            </v-col>
+                            <v-col align="end">
+                                
                             </v-col>
                         </v-row>
 
@@ -76,7 +84,8 @@
             ...mapActions('detalle_evaluacion_sgs', [
                 'obtener_actividades_disponibles',
                 'obtener_responsables',
-                'actualizar_porcentaje'
+                'actualizar_porcentaje',
+                'eliminar_actividad'
             ]),
             mostrar_modal(){
 
@@ -88,11 +97,11 @@
                 this.$refs.modal.show()
 
             }
-
         },  
         computed: {
             ...mapState('detalle_evaluacion_sgs', {
-                actividades: state => state.actividades
+                actividades: state => state.actividades,
+                actividad_select: state => state.actividad_select
             })
         }
     }

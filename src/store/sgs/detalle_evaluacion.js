@@ -1,5 +1,7 @@
 import request from '@/functions/request'
 
+import alert from '@/functions/alert.js'
+
 const namespaced = true
 
 const state = {
@@ -149,7 +151,7 @@ const actions = {
         })
 
     },
-    agregar_actividades({state, getters}){
+    agregar_actividades({state, getters, dispatch}){
 
         const data = {
             url: 'sgs_agregar_actividad_eva',
@@ -162,6 +164,8 @@ const actions = {
         request.post(data)
         .then((response) => {
             console.log(response.data)
+            dispatch('obtener_actividades_disponibles')
+            dispatch('obtener_actividades')
         })
 
     },
@@ -192,7 +196,6 @@ const actions = {
 
         request.post(data)
         .then((response) => {
-            console.log(response.data)
             commit('set_actividades', response.data)
         })
 
@@ -297,6 +300,37 @@ const actions = {
         .then((response) => {
             if (response.data.status == 200) {
                 dispatch('obtener_responsables', {id: state.actividad_select.id, not_reload: true})
+            }
+        })
+
+    },
+    eliminar_actividad({state, dispatch}){
+
+        const data_alert = {
+            title: '¿Está seguro?',
+            message: 'Una vez eliminada no se podrá recuperar!',
+            type: 'warning',
+            confirm_text: 'ELIMINAR',
+            cancel_text: 'Cancelar'
+        }
+
+        alert.show_confirm(data_alert)
+        .then((result) => {
+            if (result.isConfirmed) {
+
+                const data = {
+                    url: 'sgs_eliminar_actividad_evaluacion',
+                    data: {
+                        id: state.actividad_select.id
+                    }
+                }
+
+                request.post(data)
+                .then(() => {
+                    dispatch('obtener_actividades')
+                    dispatch('obtener_responsables', {id: state.actividad_select.id, not_reload: true})
+                })
+
             }
         })
 

@@ -39,7 +39,7 @@
                                 </v-btn>
                             </v-col>
                             <v-col align="end">
-                                <v-btn small icon color="blue accent-4">
+                                <v-btn @click="obtener_detalle(evaluacion.id)" small icon color="blue accent-4">
                                     <v-icon>
                                         mdi-pencil
                                     </v-icon>
@@ -65,7 +65,7 @@
             :fullscreen="fullscreen"
         >
             <template #form>
-                <FormEvaluacion v-if="content == 'form'" @closeModal="close_modal" />
+                <FormEvaluacion ref="form" v-if="content == 'form'" @closeModal="close_modal" />
                 <DetalleEvaluacion v-else-if="content == 'detalle'" />
             </template>
         </Modal>
@@ -99,16 +99,22 @@
         methods: {
             ...mapActions('evaluacion_sgs', [
                 'obtener_evaluaciones',
-                'eliminar_evaluacion'
+                'eliminar_evaluacion',
+                'detalle_evaluacion'
             ]),
             ...mapActions('detalle_evaluacion_sgs', [
                 'obtener_actividades'
             ]),
             ...mapMutations('detalle_evaluacion_sgs', [
                 'set_id_evaluacion',
-                'clearSelection'
+                'clearSelection',
+            ]),
+            ...mapMutations('evaluacion_sgs', [
+                'clear_evaluacion'
             ]),
             show_modal(){
+
+                this.clear_evaluacion()
 
                 this.title = "Crear Evaluación"
                 this.width = 500
@@ -116,6 +122,9 @@
                 this.fullscreen = false
                  
                 this.$refs.modal.show()
+                .then(() => {
+                    this.$refs.form.reset_validation()
+                })
 
             },
             close_modal(){
@@ -153,6 +162,21 @@
                 this.clearSelection()
                 
                 this.$refs.modal.show()
+
+            },
+            obtener_detalle(id){
+
+                this.detalle_evaluacion(id)
+                .then(() => {
+
+                    this.title = "Editar Evaluación " + id
+                    this.width = 500
+                    this.content = 'form'
+                    this.fullscreen = false
+
+                    this.$refs.modal.show()
+                    
+                })
 
             }
         },

@@ -1,5 +1,7 @@
 import request from '@/functions/request'
 
+import alert from '@/functions/alert.js'
+
 const namespaced = true
 
 const state = {
@@ -22,6 +24,16 @@ const mutations = {
     remove_evaluacion(state, payload){
         let result = state.evaluaciones.filter(evaluacion => evaluacion.id != payload)
         state.evaluaciones = result
+    },
+    set_evaluacion(state, payload){
+        state.evaluacion = payload
+    },
+    clear_evaluacion(state){
+        state.evaluacion = {
+            nombre: null,
+            descripcion: null,
+            mes: null
+        }
     }
 
 }
@@ -69,6 +81,45 @@ const actions = {
         .then((response) => {
             if (response.data.status == 200) {
                 commit('remove_evaluacion', payload)
+            }
+        })
+
+    },
+    async detalle_evaluacion({commit}, payload){
+
+        const data = {
+            url: 'sgs_detalle_evaluacion',
+            data: {
+                id: payload
+            }
+        }
+
+        await request.post(data)
+        .then((response) => {
+            commit('set_evaluacion', response.data.evaluacion)
+        })
+
+    },
+    async editar_evaluacion({state, dispatch}){
+
+        const data = {
+            url: 'sgs_editar_evaluacion',
+            data: state.evaluacion
+        }
+
+        await request.post(data)
+        .then((response) => {
+            if(response.data.status == 200){
+
+                const data = {
+                    title: 'Excelente!',
+                    message: 'La evaluación a sido actualizada exitosamente.',
+                    type: 'success'
+                }
+
+                alert.show(data)
+
+                dispatch('obtener_evaluaciones')
             }
         })
 

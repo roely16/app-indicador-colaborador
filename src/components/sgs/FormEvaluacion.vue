@@ -98,7 +98,8 @@
         },
         methods: {
             ...mapActions('evaluacion_sgs', [
-                'registrar_evaluacion'
+                'registrar_evaluacion',
+                'editar_evaluacion'
             ]),
             check_form(){
 
@@ -106,9 +107,18 @@
 
                 if (this.valid) {
                     
-                    this.registrar_evaluacion()
+                    if(!this.evaluacion.id){
+                        this.registrar_evaluacion()
+                    }else{
+                        this.editar_evaluacion()
+                    }
 
                 }
+
+            },
+            reset_validation(){
+
+                this.$refs.form.resetValidation()
 
             }
         },
