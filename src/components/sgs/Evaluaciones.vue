@@ -14,47 +14,49 @@
         </v-row>
         <v-row class="mb-4">
             <v-col cols="4" v-for="(evaluacion, key) in evaluaciones" :key="key">
-               <v-card elevation="1" outlined>
-                   <v-card-title>
-                       {{ evaluacion.nombre }}
-                   </v-card-title>
-                   <v-card-subtitle>
-                       {{ evaluacion.descripcion }}
-                   </v-card-subtitle>
-
+                <v-card class="d-flex flex-column" min-height="180" color="blue-grey lighten-5" outlined>
+                    <v-card-title>
+                        {{ evaluacion.nombre }}
+                    </v-card-title>
+                    <v-card-subtitle class="text">
+                        <span v-if="evaluacion.descripcion">
+                            {{ evaluacion.descripcion }}
+                        </span>
+                        <v-chip label else>SIN DESCRIPCIÓN</v-chip>
+                    </v-card-subtitle>
+                    <v-spacer></v-spacer>
                     <v-divider class="mx-4"></v-divider>
+                    <v-card-actions>
+                            <v-row
+                                align="center"
+                                justify="end"
+                            >
+                                <v-col>
+                                    <v-btn
+                                        color="orange"
+                                        text
+                                        @click="mostrar_detalle(evaluacion)"
+                                    >
+                                        Detalles
+                                    </v-btn>
+                                </v-col>
+                                <v-col align="end">
+                                    <v-btn @click="obtener_detalle(evaluacion.id)" small icon color="blue accent-4">
+                                        <v-icon>
+                                            mdi-pencil
+                                        </v-icon>
+                                    </v-btn>
 
-                   <v-card-actions>
-                        <v-row
-                            align="center"
-                            justify="end"
-                        >
-                            <v-col>
-                                <v-btn
-                                    color="orange"
-                                    text
-                                    @click="mostrar_detalle(evaluacion)"
-                                >
-                                    Detalles
-                                </v-btn>
-                            </v-col>
-                            <v-col align="end">
-                                <v-btn @click="obtener_detalle(evaluacion.id)" small icon color="blue accent-4">
-                                    <v-icon>
-                                        mdi-pencil
-                                    </v-icon>
-                                </v-btn>
-
-                                <v-btn @click="check_eliminar(evaluacion.id)" class="ml-2" small icon color="red accent-4">
-                                    <v-icon>
-                                        mdi-delete
-                                    </v-icon>
-                                </v-btn>
-                            </v-col>
-                        
-                        </v-row>
-                   </v-card-actions>
-               </v-card>
+                                    <v-btn @click="check_eliminar(evaluacion.id)" class="ml-2" small icon color="red accent-4">
+                                        <v-icon>
+                                            mdi-delete
+                                        </v-icon>
+                                    </v-btn>
+                                </v-col>
+                            
+                            </v-row>
+                    </v-card-actions>
+                </v-card>
             </v-col>
         </v-row>
 
@@ -71,6 +73,17 @@
         </Modal>
     </div>
 </template>
+
+<style>
+    .text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2; /* number of lines to show */
+                line-clamp: 2; 
+        -webkit-box-orient: vertical;
+    }
+</style>
 
 <script>
 
