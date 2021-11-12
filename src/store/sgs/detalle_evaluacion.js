@@ -11,7 +11,9 @@ const state = {
     id_evaluacion: null,
     actividades_disponibles: [],
     actividad_select: null,
-    responsables: []
+    responsables: [],
+    search_colaborador: '',
+    search_responsable: null
 }
 
 const mutations = {
@@ -131,6 +133,12 @@ const mutations = {
         state.actividad_select = null
         state.colaboradores = []
         state.responsables = []
+    },
+    set_search_colaborador(state, payload){
+        state.search_colaborador = payload
+    },
+    set_search_responsable(state, payload){
+        state.search_responsable = payload
     }
 }
 
@@ -377,6 +385,50 @@ const getters = {
 
         return empleados_select
     },
+    // filter_colaboradores: state => {
+
+    //     let data_filter = []
+
+    //     state.colaboradores.forEach(area => {
+            
+    //         if (area.descripcion.normalize('NFD').toUpperCase().replace(/[\u0300-\u036f]/g, "").includes(state.search_colaborador.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase())) {
+
+    //             data_filter.push(area)
+
+    //         }else{
+
+    //             let data_empleados = []
+
+    //             /** Buscar en a lista de colaboradores */
+    //             area.empleados.forEach(empleado => {
+                    
+    //                 let temp_emp = JSON.parse(JSON.stringify(empleado))
+
+    //                 let name = temp_emp.nombre + ' ' + temp_emp.apellido
+
+    //                 if (name.normalize('NFD').toUpperCase().replace(/[\u0300-\u036f]/g, "").includes(state.search_colaborador.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toUpperCase())) {
+                        
+    //                     data_empleados.push(temp_emp)
+
+    //                 }
+
+    //             });
+
+    //             /** Verificar si al menos un empleado coincidio con la búsqueda */
+    //             if (data_empleados.length > 0) {
+                    
+    //                 area.empleados = data_empleados
+    //                 data_filter.push(area)
+
+    //             }
+    //         }
+            
+    //     });
+
+
+
+    //     return data_filter
+    // }
 }
 
 export default {
