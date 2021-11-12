@@ -73,6 +73,7 @@
                         </v-row>
                     </v-card-text>
                 </v-card>
+                <AlertMsg v-if="!actividad_select" msg="Debe de seleccionar una actividad" />
             </v-card-text>
         </v-card>
     </div>
@@ -81,8 +82,12 @@
 <script>
     
     import { mapState, mapActions, mapMutations, mapGetters } from 'vuex'
-    
+    import AlertMsg from '@/components/AlertSeleccion'
+
     export default {
+        components: {
+            AlertMsg
+        },
         data(){
             return{
                 show_search: false
@@ -101,6 +106,7 @@
         computed: {
             ...mapState('detalle_evaluacion_sgs', {
                 areas: state => state.colaboradores,
+                actividad_select: state => state.actividad_select
             }),
             ...mapGetters('detalle_evaluacion_sgs', [
                 'colaboradores_marcados',

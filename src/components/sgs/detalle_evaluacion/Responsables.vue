@@ -87,7 +87,7 @@
                         </v-row>
                     </v-card-text>
                 </v-card>
-                <AlertMsg v-if="responsables.length <= 0" msg="Debe de seleccionar una actividad" />
+                <AlertMsg v-if="!actividad_select || responsables.length <= 0" :msg="!actividad_select ? 'Debe de seleccionar una actividad' : 'Aún no se han agregado responsables'" />
             </v-card-text>
         </v-card>
     </div>
@@ -128,7 +128,8 @@
         computed: {
             ...mapState('detalle_evaluacion_sgs', {
                 actividad: state => state.actividad,
-                responsables: state => state.responsables
+                responsables: state => state.responsables,
+                actividad_select: state => state.actividad_select
             }),
             ...mapGetters('detalle_evaluacion_sgs', [
                 'responsables_marcados'
