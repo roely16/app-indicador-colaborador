@@ -1,18 +1,15 @@
 <template>
     <div>
         <v-row>
-            <v-col cols="12" md="4"></v-col>
+            <v-col cols="12" md="3"></v-col>
             <v-col cols="12" md="1" class="text-center" v-for="(criterio, key) in criterios" :key="key">
-                <!-- <span class="text-caption">
-                    {{ criterio.nombre }}
-                </span> -->
                 <v-avatar>
                     <v-img :src="require('@/assets/img/' + criterio.icon)"></v-img>
                 </v-avatar>
             </v-col>
         </v-row>
         <v-row v-for="(item, key) in items" :key="key">
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="3">
                 {{ item.nombre }} {{ item.apellido }}
             </v-col>
             <v-col cols="1" class="text-center" v-for="(data_criterio, key) in item.criterios" :key="key">
@@ -68,6 +65,10 @@
                     {
                         nombre: "Competencias",
                         icon: 'user.png'
+                    },
+                    {
+                        nombre: "SGS",
+                        icon: 'folder_sgs.png'
                     }
                 ]
             }
