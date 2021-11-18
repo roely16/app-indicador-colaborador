@@ -3,12 +3,15 @@ import request from '@/functions/request'
 const namespaced = true
 
 const state = {
-    dashboard: null
+    dashboard: []
 }
 
 const mutations = {
 
     setDashboard(state, payload){
+        state.dashboard = payload
+    },
+    updateDashboardAnual(state, payload){
         state.dashboard = payload
     }
 
@@ -42,9 +45,27 @@ const actions = {
         }
 
         await request.post(data)
-        .then((response) => {
-            console.log(response.data)
+        .then(() => {
+            //console.log(response.data)
         })
+
+    },
+    fetchAnualDashboard({state, commit}){
+
+        const data = {
+            url: 'puntaje_anual',
+            data: {
+                areas: state.dashboard
+            }
+        }
+
+        request.post(data)
+        .then((response) => {
+            //console.log(response.data)
+            commit('setDashboard', response.data)
+        })
+
+        //commit('setDashboard', [])
 
     }
 

@@ -166,12 +166,12 @@
 
 	import ListView from '@/components/dashboard/ListView'
 	
-	import { mapMutations, mapActions } from 'vuex'
+	import { mapMutations, mapActions, mapState } from 'vuex'
 
     export default {
        
        components: {
-           Indicador,
+			Indicador,
 			AlertSeleccion,
 			ListView
        },
@@ -192,7 +192,7 @@
 				],
                 codarea: [],
                 areas: [],
-                colaboradores: [],
+                //colaboradores: [],
 				loading: false,
 				date: new Date().toISOString().substr(0, 7),
                 menu: false,
@@ -207,7 +207,8 @@
 				'setDashboard'
 			]),
 			...mapActions('dashboard', [
-				'updateDashboard'
+				'updateDashboard',
+				'fetchAnualDashboard'
 			]),
             obtener_areas(){
 
@@ -247,9 +248,11 @@
 					request.post(data)
 					.then((response) => {
 
-						this.colaboradores = response.data
+						//this.colaboradores = response.data
 						this.loading = false
-						this.setDashboard(this.colaboradores)
+						this.setDashboard(response.data)
+
+						this.fetchAnualDashboard()
 
 					})
 
@@ -309,7 +312,6 @@
 
         },
 		watch: {
-
 			codarea: function(val){
 
 				if (val) {
@@ -319,6 +321,11 @@
 				}
 
 			},
+		},
+		computed: {
+			...mapState('dashboard', {
+				colaboradores: state => state.dashboard
+			})
 		},
         mounted(){
 

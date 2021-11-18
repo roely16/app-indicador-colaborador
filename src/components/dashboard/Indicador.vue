@@ -89,10 +89,20 @@
                     </v-col>
                 </v-row>
                 <v-row dense>
-                    <v-col cols="12">
+                    <v-col justify="center" cols="12">
                         <h5>
                             <strong>
-                                PUNTAJE ANUAL: {{ colaborador.total_mensual.toFixed(2) }}
+                                PUNTAJE ANUAL: 
+                                <v-tooltip v-if="!colaborador.loading_anual" right>
+                                    <template v-slot:activator="{on, attrs}">
+                                        <span v-bind="attrs" v-on="on">{{ colaborador.total_anual.toFixed(2) }}</span>
+                                    </template>
+                                    <div v-for="(date, key) in colaborador.dates" :key="key">
+                                        <span>{{ date }}</span>
+                                    </div>
+                                </v-tooltip>
+                                <v-progress-circular v-else size="20" width="2" indeterminate color="primary"></v-progress-circular>
+                                
                             </strong>
                         </h5>
                     </v-col>
