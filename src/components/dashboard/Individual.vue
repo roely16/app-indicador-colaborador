@@ -72,7 +72,7 @@
                     <v-col cols="8">
                         <small>
                             <strong>
-                                PUNTAJE MENSUAL: {{ colaborador.total_mensual.toFixed(2) }} PUNTOS
+                                PUNTAJE MENSUAL: {{ colaborador.total_mensual.toFixed(2) }}
                             </strong>
                         </small>
                     </v-col>
