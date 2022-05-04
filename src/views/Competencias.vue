@@ -273,6 +273,7 @@
 				this.secciones = false
 				
 				this.$store.commit('setEdit', true)
+				this.$store.commit('setIdEvaluacion', item.id)
 
 				this.$store.dispatch('getSeguimiento')
 				
