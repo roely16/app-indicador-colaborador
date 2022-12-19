@@ -1,4 +1,6 @@
-# app-indicador-colaborador
+# Aplicación Estado de Desarrollo
+
+Aplicación desarrollada a solicitud de Gestión de Servicios, con el objetivo de poder medir de una forma conjunta diversos aspectos de cada colaborador de la dirección. 
 
 ## Project setup
 ```
